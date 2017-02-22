@@ -1,0 +1,39 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package ekshiksha.vclab.activity;
+
+import ekshiksha.vclab.equipment.Equipment;
+import ekshiksha.vclab.equipment.Equipments;
+
+/**
+ *
+ * @author mayank
+ */
+public class Wash extends Activity {
+
+    public int id;
+
+    public Wash(String type, int id){
+        super(type);
+        this.id= id;
+
+    }
+
+    public void setId(int id) {
+        this.id = id;
+    }
+    public int getId() {
+        return id;
+    }
+
+    @Override
+    public void execute(){
+        Equipment equip = Equipments.getEquipmentByID(id);
+
+
+    }
+
+}

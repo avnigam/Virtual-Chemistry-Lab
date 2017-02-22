@@ -1,0 +1,26 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<!--
+    Document   : Experiment.xml
+    Created on : 30 September, 2011, 12:39 PM
+    Author     : asl
+    Description:
+        Purpose of the document follows.
+        ...
+-->
+
+<Experiment>
+    <Equipments>
+            <Equipment type="1" dimX ="5" dimY="10" id="2" positionX="300" positionY="300"> </Equipment>
+            <Equipment type="1" dimX ="5" dimY="10" id="1" positionX="370" positionY="300"> </Equipment>
+            <Equipment type="1" dimX ="5" dimY="10" id="3" positionX="430" positionY="300"> </Equipment>
+            
+    </Equipments>
+    <Activities>
+            <Activity type="1" startTime="0" endTime="10" id="1"> </Activity>
+            <Activity type="1" startTime="11" endTime="20" id="2"> </Activity>
+            <Activity type="2" startTime="21" endTime="30" id="3"> </Activity>
+            <Activity type="1" startTime="31" endTime="40" id="4"> </Activity>
+            <Activity type="2" startTime="41" endTime="50" id="5"> </Activity>
+     </Activities>
+</Experiment>

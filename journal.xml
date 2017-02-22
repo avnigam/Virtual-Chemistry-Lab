@@ -1,0 +1,20 @@
+<Document>
+<Apparatus_Required>
+		<Apparatus Type="Glassware" Subtype="Bottle" Name="Flask H" ChemicalName="SulphuricAcid" 
+                           Formula="H2SO4" ContentHeight="20" Volume="40" Quantity="80" Molarity="0.10" id="C">
+		</Apparatus>
+		<Apparatus Type="Glassware" Subtype="Bottle" Name="Flask K" ChemicalName="Water" 
+			   Formula="H2O" ContentHeight="20" Volume="60" Quantity="80" Molarity="1.0" id="K">
+		</Apparatus>
+		<Apparatus Type="Glassware" Subtype="Beaker" Name="Flask D" ChemicalName="" 
+			   Formula="" ContentHeight="" Volume="" Quantity="" Molarity="" id="D">
+		</Apparatus>
+</Apparatus_Required>
+<Activity>
+		<Action Type="Move" id="D" X="200" Y="450"></Action>
+		<Action Type="Move" id ="C" X="300" Y="450"></Action>
+		<Action Type="Pour" srcid="C" dstid="D" Amount="4"></Action>
+		<Action Type="Move" id ="C" X="400" Y="450"></Action>
+		<Action Type="Pour" srcid="K" dstid="D" Amount="36"></Action>
+</Activity>
+</Document>

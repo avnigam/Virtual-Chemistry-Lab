@@ -1,0 +1,22 @@
+<Experiment>
+    <Header>
+	
+        <Author Name="EkShiksha"></Author>
+        <Level Value="CBSE Standard IX"></Level>
+        <Marks Value="100"></Marks>
+        <Desc Value="Prepare a solution of 0.1M Sulphuric Acid\nGiven : 1M Sulphuric Acid\nGiven : Water\nPrepared solution to be stored in a bottle and labeled appropriately."></Desc>
+        <Student Naming="A B C"></Student>
+    </Header>
+    
+    <Perform>
+	
+    </Perform>
+    <Observation>
+	<Remarks Value="10 ml of 1M Sulphuric Acid mixed with 90 ml of water produced 100ml of 0.1M Sulphuric acid."></Remarks>
+    </Observation>
+    <Evaluation>
+	<Marks Value="50"></Marks>
+	<Remarks Value="List of Errors."></Remarks>
+	
+    </Evaluation>
+</Experiment>

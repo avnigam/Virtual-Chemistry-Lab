@@ -1,0 +1,90 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package ekshiksha.vclab.lab;
+
+
+/**
+ *
+ * @author mayank
+ */
+import java.awt.*;
+import ekshiksha.vclab.util.Constants;
+
+public class Basin {
+    
+    private Point[]table;
+    private Point plcmntStart, plcmntEnd;
+    WorkBench environ;
+
+    public Basin(WorkBench environ)
+    {
+        this.environ= environ;
+    }
+
+    public void drawBasin( Graphics g )
+    {
+        double tantheta = (table[3].y - table[2].y)/(double)( table[3].x - table[2].x );
+        double tanthetaLeft = (table[0].y - table[1].y)/(double)( table[1].x - table[0].x );
+
+   		int xarr[] = new int[4];
+   		int yarr[] = new int[4];
+    	xarr[2] = table[2].x - Constants.DISTANCE_RIGHT_EDGE_BASIN;
+    	xarr[3] = xarr[2] + (int)(Constants.BASIN_WIDTH/tantheta);
+    	xarr[1] = xarr[2] - Constants.BACK_LENGTH_BASIN;
+    	xarr[0] = xarr[1] - (int)(Constants.BASIN_WIDTH/tantheta);
+
+    	yarr[3] = table[3].y - Constants.DISTANCE_BOTTOM_EDGE_BASIN;
+    	yarr[2] = yarr[3] - Constants.BASIN_WIDTH;
+    	yarr[1] = yarr[2];
+    	yarr[0] = yarr[3];
+
+    	plcmntEnd = new Point( xarr[0]  ,plcmntStart.y );
+
+    	g.setColor( Color.LIGHT_GRAY );
+    	g.fillPolygon( xarr, yarr, 4 );
+
+    	g.setColor( Color.BLACK );
+    	g.drawLine( xarr[1], yarr[1], xarr[1], yarr[1] + Constants.BASIN_WIDTH );
+    	g.drawLine( xarr[2], yarr[2], xarr[2], yarr[2] + Constants.BASIN_WIDTH );
+    	g.drawLine( xarr[0], yarr[0], xarr[1], yarr[1] );
+    	g.drawLine( xarr[1], yarr[1], xarr[2], yarr[2] );
+    	g.drawLine( xarr[2], yarr[2], xarr[3], yarr[3] );
+    	g.drawLine( xarr[3], yarr[3], xarr[0], yarr[0] );
+
+    	int tapx[] = new int[8];
+    	int tapy[] = new int[8];
+
+    	tapx[3] = xarr[2] + (int)(Constants.BASIN_WIDTH/((double)2*tantheta));
+    	tapx[2] = tapx[3];
+    	tapx[1] = tapx[2] - Constants.TAP_WIDTH;
+    	tapx[0] = tapx[1];
+    	tapx[7] = tapx[0] + Constants.TAP_THICKNESS;
+    	tapx[6] = tapx[7];
+    	tapx[5] = tapx[6] + Constants.TAP_WIDTH - 2*Constants.TAP_THICKNESS;
+    	tapx[4] = tapx[5];
+
+    	tapy[3] = yarr[2] + Constants.BASIN_WIDTH/2;//table[2].y + Constants.BASIN_WIDTH/2 + ((Constants.TABLE_HEIGHT_FROM_EDGE_STARTINGS + Constants.LENGTH_EDGE_HORIZONTAL_LINE) - ( Constants.DISTANCE_BOTTOM_EDGE_BASIN + Constants.BASIN_WIDTH));
+    	tapy[2] = tapy[3] - Constants.TAP_HEIGHT;
+    	tapy[1] = tapy[2];
+    	tapy[0] = tapy[1] + Constants.TAP_THICKNESS + 8;
+    	tapy[7] = tapy[0];
+    	tapy[6] = tapy[7] - 8;
+    	tapy[5] = tapy[6];
+    	tapy[4] = tapy[5] + Constants.TAP_HEIGHT - Constants.TAP_THICKNESS - (int)( Constants.TAP_THICKNESS * tantheta );
+
+    	g.setColor( Constants.TAP_COLOR );
+    	g.fillPolygon( tapx, tapy, 8);
+    	g.setColor( Color.BLACK );
+    	g.drawLine( tapx[0], tapy[0], tapx[1], tapy[1] );
+    	g.drawLine( tapx[1], tapy[1], tapx[2], tapy[2] );
+    	g.drawLine( tapx[2], tapy[2], tapx[3], tapy[3] );
+    	g.drawLine( tapx[4], tapy[4], tapx[5], tapy[5] );
+    	g.drawLine( tapx[5], tapy[5], tapx[6], tapy[6] );
+    	g.drawLine( tapx[6], tapy[6], tapx[7], tapy[7] );
+    }
+
+
+}

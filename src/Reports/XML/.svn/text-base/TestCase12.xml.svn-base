@@ -1,0 +1,23 @@
+<Experiment>
+    <Header>
+	<Title Value="Preparation of solution of known molarity"></Title>
+        <Author Name="EkShiksha"></Author>
+        <Level Value="CBSE Standard IX"></Level>
+        <Marks Value="100"></Marks>
+        <Description Value="Prepare a solution of 0.1M Sulphuric Acid\nGiven : 1M Sulphuric Acid\nGiven : Water\nPrepared solution to be stored in a bottle and labeled appropriately."></Description>
+        <Student Name="A B C"></Student>
+    </Header>
+    <Setup>
+	<Equipment Id="0" Type="Bottle" Size="eXtraSmall" Name="Bo3" Contents="Acetic Acid" Quantity="50" Strength="1" Location="Shelf Top 3"></Equipment>
+	
+    </Setup>
+    
+    <Observation>
+	<Remarks Value="10 ml of 1M Sulphuric Acid mixed with 90 ml of water produced 100ml of 0.1M Sulphuric acid."></Remarks>
+    </Observation>
+    <Evaluation>
+	<Marks Value="50"></Marks>
+	<Remarks Value="List of Errors."></Remarks>
+	
+    </Evaluation>
+</Experiment>

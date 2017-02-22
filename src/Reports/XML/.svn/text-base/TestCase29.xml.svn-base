@@ -1,0 +1,30 @@
+<Experiment>
+    <Header>
+	<Title Value="Preparation of solution of known molarity"></Title>
+        <Author Name="EkShiksha"></Author>
+        <Level Value="CBSE Standard IX"></Level>
+        <Marks Value="100"></Marks>
+        <Description Value="Prepare a solution of 0.1M Sulphuric Acid\nGiven : 1M Sulphuric Acid\nGiven : Water\nPrepared solution to be stored in a bottle and labeled appropriately."></Description>
+        <Student Name="A B C"></Student>
+    </Header>
+    <Setup>
+	<Equipment Id="1" Type="Bottle" Size="eXtraSmall" Name="Bo3" Contents="Acetic Acid" Quantity="50" Strength="1" Location="Shelf Top 3"></Equipment>
+	<Equipment Id="1" Type="Bottle" Size="Small" Name="Bo4" Contents="Nitric Acid" Quantity="100" Strength="1" Location="Shelf Top 4"></Equipment>
+	<Equipment Id="2" Type="Bottle" Size="Large" Name="Bo1" Contents="Sulphuric Acid" Quantity="400" Strength="0.50" Location="Shelf Top 1"></Equipment>
+	<Equipment Id="1" Type="Bottle" Size="Medium" Name="Bo2" Contents="Hydrochloric Acid" Quantity="200" Strength="0.50" Location="Shelf Top 2"></Equipment>
+	
+    </Setup>
+    <Perform>
+	<Activity Type="Move" Id="5" Location="Table 0.5,0.5"></Activity>
+	<Activity Type="Move" Id="2" Location="Table 0.5,0.6"></Activity>
+	
+    </Perform>
+    <Observation>
+	<Remarks Value="10 ml of 1M Sulphuric Acid mixed with 90 ml of water produced 100ml of 0.1M Sulphuric acid."></Remarks>
+    </Observation>
+    <Evaluation>
+	<Marks Value="50"></Marks>
+	<Remarks Value="List of Errors."></Remarks>
+	
+    </Evaluation>
+</Experiment>

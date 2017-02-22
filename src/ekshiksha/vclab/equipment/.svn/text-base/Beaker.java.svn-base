@@ -1,0 +1,106 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package ekshiksha.vclab.equipment;
+
+import java.awt.Graphics;
+import java.awt.Graphics2D;
+import java.awt.Point;
+import java.util.Vector;
+/**
+ *
+ * @author asl
+ */
+public class Beaker extends Equipment {
+
+    public Vector<Point> coords = new Vector<Point>();
+    Point originShift; //for origin
+  
+
+    public Beaker(int id, String type,String size, String equip_Name, String contents, float quantity, float strength, float x, float y, String position){
+        super(id ,type,size, equip_Name,contents,quantity, strength, x, y, position);
+        //originShift= position;//Assignment of position to originshift
+
+        //initEquipment();
+        //this.dimX = 43;
+        //this.dimY = 57;
+    }
+
+    public Beaker(int id, String type,String size, String equip_Name, String contents, float quantity, float strength, int number, String position) {
+        super(id ,type,size, equip_Name,contents,quantity, strength, number, position);
+    }
+
+
+
+    @Override
+    public void initEquipment(){
+
+        coords.addElement( new Point(2, 0 ) );
+    	coords.addElement( new Point(2, 1 ) );
+    	coords.addElement( new Point(2, 2 ) );
+    	coords.addElement( new Point(2, 3 ) );
+    	coords.addElement( new Point(2, 4 ) );
+    	coords.addElement( new Point(2, 6 ) );
+    	coords.addElement( new Point(2, 9 ) );
+    	coords.addElement( new Point(2, 11) );
+    	coords.addElement( new Point(2, 14 ) );
+    	coords.addElement( new Point(2, 17 ) );
+    	coords.addElement( new Point(2, 20 ) );
+    	coords.addElement( new Point(2, 25 ) );
+    	coords.addElement( new Point(2, 30 ) );
+    	coords.addElement( new Point(2, 35 ) );
+    	coords.addElement( new Point(2, 40 ) );
+    	coords.addElement( new Point(2, 45 ) );
+    	coords.addElement( new Point(2, 55 ) );
+    	coords.addElement( new Point(3,56 ) );
+    	coords.addElement( new Point(4, 57 ) );
+    	coords.addElement( new Point(14, 57 ) );
+    	coords.addElement( new Point(20, 57 ) );
+    	coords.addElement( new Point(25, 57 ) );
+
+    	coords.addElement( new Point(27, 57 ) );
+    	coords.addElement( new Point(30, 57 ) );
+    	coords.addElement( new Point(35, 57 ) );
+    	coords.addElement( new Point(40, 57 ) );
+    	coords.addElement( new Point(41, 56 ) );
+    	coords.addElement( new Point(42, 55 ) );
+    	coords.addElement( new Point(42, 50) );
+    	coords.addElement( new Point(42, 45 ) );
+    	coords.addElement( new Point(42, 30 ) );
+    	coords.addElement( new Point(42, 35 ) );
+    	coords.addElement( new Point(42, 32 ) );
+    	coords.addElement( new Point(42, 30 ) );
+    	coords.addElement( new Point(42, 10 ) );
+    	coords.addElement( new Point(42, 5 ) );
+    	coords.addElement( new Point(42, 1 ) );
+    	coords.addElement( new Point(43, 0 ) );
+       
+
+    }
+
+    @Override
+     public boolean contains(int x, int y) {
+        boolean contained = false;
+       /* if(x >= originShift.x && x <= originShift.x+dimX && y >= originShift.y && y <= originShift.y+dimY) {
+            contained = true;
+        }*/
+        return contained;
+    }
+
+    @Override
+    public void drawEquipment(Graphics g){
+        Graphics2D g2d = (Graphics2D)g;
+        g2d.setColor(borderColor);
+        for( int i = 0; i < coords.size() - 1; i++ )
+  	  	 {
+    		Point s = coords.elementAt( i );
+    		Point d = coords.elementAt( i + 1 );
+    		g.drawLine( s.x + originShift.x, s.y + originShift.y, d.x + originShift.x, d.y + originShift.y );
+  	  	 }
+    }
+  
+
+
+}

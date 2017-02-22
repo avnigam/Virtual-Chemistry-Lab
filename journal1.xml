@@ -1,0 +1,12 @@
+<?xml version="1.0"?>
+<Document>
+<Apparatus_Required>
+	<Apparatus Type ="Glassware" SubType="Flask" ChemicalName="HydrochloricAcid" Id="H" Molarity=" 0.1" Volume="10"></Apparatus>
+</Apparatus_Required>
+<Activity>
+	<Action Type="Move" id="H" X="137" Y="155"></Action>
+	<Action Type="Move" id="H" X="187" Y="392"></Action>
+	<Action Type="Move" id="H" X="237" Y="392"></Action>
+	
+</Activity>
+</Document>

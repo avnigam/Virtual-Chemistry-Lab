@@ -1,0 +1,35 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package ekshiksha.vclab.equipment;
+
+import java.awt.Graphics;
+/**
+ *
+ * @author asl
+ */
+public class Flask extends Equipment{
+
+    public Flask(int id, String type,String size, String equip_Name, String contents, float quantity, float strength, float x, float y, String position){
+        super(id ,type,size, equip_Name,contents,quantity, strength, x, y, position);
+    }
+
+    public Flask(int id, String type,String size, String equip_Name, String contents, float quantity, float strength, int number, String position){
+        super(id ,type,size, equip_Name,contents,quantity, strength, number, position);
+    }
+
+
+    @Override
+    public void initEquipment(){
+
+    }
+
+    
+    @Override
+    public void drawEquipment(Graphics g){
+        System.out.println("Drawing flask..");
+    }
+
+}

@@ -1,0 +1,20 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+package ekshiksha.vclab.equipment;
+
+/**
+ *
+ * @author mayur
+ */
+public interface EquipmentType {
+
+    public static final String BEAKER = "Beaker";
+    public static final String BOTTLE = "Bottle";
+    public static final String BURETTE = "Burette";
+    public static final String FLASK = "Flask";
+    public static final String PIPETTE = "Pipette";
+    public static final String BURNER = "Burner";
+    public static final String TESTTUBE = "TestTube";
+}

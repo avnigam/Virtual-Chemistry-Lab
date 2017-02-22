@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><Specification SpecificationAuthor="Aviral Nigam" Title="Virtual Chemistry Lab">
+<Store>
+<Cheminfo ColorB="215" ColorG="230" ColorR="213" Formula="HCl" Name="Hydrochloric Acid"/>
+<Cheminfo ColorB="37" ColorG="193" ColorR="255" Formula="HNO3" Name="Nitric Acid"/>
+<Cheminfo ColorB="245" ColorG="235" ColorR="233" Formula="NaOH" Name="Sodium Hydrochloride"/>
+<Cheminfo ColorB="255" ColorG="245" ColorR="152" Formula="CuCl2" Name="Cupric Chloride"/>
+<Cheminfo ColorB="255" ColorG="127" ColorR="0" Formula="CuSO4" Name="Copper Sulfate"/>
+<Cheminfo ColorB="140" ColorG="58" ColorR="238" Formula="MnCl2" Name="Manganese Chloride "/>
+<Cheminfo ColorB="156" ColorG="0" ColorR="0" Formula="CoCl2" Name="Cobalt Chloride"/>
+<Cheminfo ColorB="50" ColorG="153" ColorR="204" Formula="NiCl2" Name="Nickel Chloride"/>	
+<Cheminfo ColorB="0" ColorG="255" ColorR="255" Formula="PbI2" Name="Lead Iodide"/>
+<Cheminfo ColorB="245" ColorG="200" ColorR="213" Formula="H2SO4" Name="Sulphuric Acid"/>
+<Cheminfo ColorB="15" ColorG="185" ColorR="255" Formula="FeCl3" Name="Ferric Chloride"/>
+<Cheminfo ColorB="199" ColorG="110" ColorR="255" Formula="CoSO4" Name="Cobalt Sulpahte"/>
+<Cheminfo ColorB="0" ColorG="235" ColorR="0" Formula="NiSO4" Name="Nickel Sulpahte"/>
+<Cheminfo ColorB="253" ColorG="253" ColorR="253" Formula="C6H6" Name="Benzene"/><Cheminfo ColorB="100" ColorG="255" ColorR="123" Formula="C7H5(NO2)3" Name="TNT"/></Store>
+</Specification>

@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><Specification SpecificationAuthor="Aviral Nigam" Title="Virtual Chemistry Lab"><Header><Title>Demonstration of VCLab</Title><Author>vclab</Author><Level>1</Level><Marks>100</Marks><Description>Working of VCLab</Description><Student>vclab2012</Student><Instruction>Demonstrates the working of 'Virtual Chemistry Lab'.
+Credits:.
+Anirban Mukherjee.
+Aviral Nigam.
+Harsh Jhamtani.
+Kaushik Raju.
+Malleswari Vinukonda.
+Mayur Rao.
+Pankaj Jangir.
+Vikram Verma.</Instruction></Header><Setup><Equipment ColorB="0" ColorG="0" ColorR="0" Id="1" InitialX="0.225" InitialY="0.24920633" Quantity="0.0" Size="1" Strength="0.0" Type="Burner"/><Equipment ColorB="0" ColorG="0" ColorR="0" Id="2" InitialX="0.05" InitialY="0.35" Quantity="0.0" Size="1" Strength="0.0" Type="Burette"/><Equipment ColorB="0" ColorG="0" ColorR="0" Id="3" InitialX="0.3359375" InitialY="0.26253968" Quantity="0.0" Size="3" Strength="0.0" Type="Flask"/><Equipment ColorB="0" ColorG="0" ColorR="0" Id="4" InitialX="0.446875" InitialY="0.25920635" Quantity="0.0" Size="3" Strength="0.0" Type="TestTube"/><Equipment ColorB="255" ColorG="245" ColorR="152" Contents="CuCl2" Id="5" InitialX="0.5578125" InitialY="0.21253967" Quantity="50.0" Size="2" Strength="1.0" Type="Bottle"/><Equipment ColorB="50" ColorG="153" ColorR="204" Contents="NiCl2" Id="6" InitialX="0.66875" InitialY="0.22253968" Quantity="50.0" Size="1" Strength="1.0" Type="Bottle"/><Equipment ColorB="0" ColorG="0" ColorR="0" Id="7" InitialX="0.225" InitialY="0.4387732" Quantity="0.0" Size="3" Strength="0.0" Type="Pipette"/><Equipment ColorB="0" ColorG="0" ColorR="0" Id="8" InitialX="0.3359375" InitialY="0.50977325" Quantity="0.0" Size="3" Strength="0.0" Type="Beaker"/></Setup></Specification>

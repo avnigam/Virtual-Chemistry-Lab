@@ -1,0 +1,156 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package ekshiksha.vclab.lab;
+
+/**
+ *
+ * @author mayank
+ */
+import java.awt.*;
+import ekshiksha.vclab.util.Constants;
+
+public class Shelf
+{
+
+    private Point[] table;
+    private Rectangle shelves[];
+    WorkBench environ;
+
+    public Shelf(WorkBench environ)
+    {
+        this.environ = environ;
+        shelves = new Rectangle[2];
+        table = new Point[4];
+    }
+
+    public void drawShelf( Graphics g )
+    {
+        int hx = environ.getHeight();
+    	int wx = environ.getWidth();
+
+    	int floorLimit = (int)(hx/Constants.FLOOR_LIMIT);
+
+    	int sx = 0;
+    	int sy = hx - floorLimit - Constants.LENGTH_EDGE_HORIZONTAL_LINE;
+    	int ey = sy - Constants.TABLE_HEIGHT_FROM_EDGE_STARTINGS;
+    	int ex = (int)(wx*Constants.FRACTION_FIRST);
+    	table[0] = new Point( sx, sy );
+    	table[1] = new Point( ex, ey );
+
+    	int ax[] = new int[4];
+    	int ay[] = new int[4];
+
+    	int bx[] = new int[4];
+    	int by[] = new int[4];
+
+    	ax[0] = table[1].x;
+    	ax[1] = table[2].x;
+    	ax[2] = ax[1];
+    	ax[3] = ax[0];
+
+    	ay[0] = Constants.TOP_SHELF_MARGIN;
+    	ay[1] = ay[0];
+    	ay[2] = table[1].y - Constants.BOTTOM_SHELF_MARGIN;
+    	ay[3] = ay[2];
+
+    	bx[0] = ax[0] + Constants.SHELF_DX;
+    	bx[1] = ax[1] - Constants.SHELF_DX;
+    	bx[2] = ax[2] - Constants.SHELF_DX;
+    	bx[3] = ax[3] + Constants.SHELF_DX;
+
+    	by[0] = ay[0] + Constants.SHELF_DY;
+    	by[1] = ay[1] + Constants.SHELF_DY;
+    	by[2] = ay[2] - Constants.SHELF_DY;
+    	by[3] = ay[3] - Constants.SHELF_DY;
+
+    	g.setColor( Color.LIGHT_GRAY );
+    	int pxarr[] = {ax[0], bx[0], bx[3], ax[3]};
+    	int pyarr[] = {ay[0], by[0], by[3], ay[3]};
+
+    	g.fillPolygon(pxarr, pyarr, 4 );
+
+    	pxarr[0] = ax[0];
+    	pxarr[1] = ax[1];
+    	pxarr[2] = bx[1];
+    	pxarr[3] = bx[0];
+
+    	pyarr[0] = ay[0];
+    	pyarr[1] = ay[1];
+    	pyarr[2] = by[1];
+    	pyarr[3] = by[0];
+
+    	g.setColor( Constants.TOP_BOTTOM_COLOR );
+    	g.fillPolygon(pxarr, pyarr, 4 );
+
+    	pxarr[0] = bx[1];
+    	pxarr[1] = ax[1];
+    	pxarr[2] = ax[2];
+    	pxarr[3] = bx[2];
+
+    	pyarr[0] = by[1];
+    	pyarr[1] = ay[1];
+    	pyarr[2] = ay[2];
+    	pyarr[3] = by[2];
+
+    	g.setColor( Color.LIGHT_GRAY );
+    	g.fillPolygon(pxarr, pyarr, 4 );
+
+    	pxarr[0] = bx[3];
+    	pxarr[1] = bx[2];
+    	pxarr[2] = ax[2];
+    	pxarr[3] = ax[3];
+
+    	pyarr[0] = by[3];
+    	pyarr[1] = by[2];
+    	pyarr[2] = ay[2];
+    	pyarr[3] = ay[3];
+
+    	g.setColor( Constants.TOP_BOTTOM_COLOR );
+    	g.fillPolygon(pxarr, pyarr, 4 );
+
+    	int spaceLength = by[3] - by[0];
+    	int spaceWidth = ax[1] - ax[0];
+
+    	int midy = by[0] + (int)(spaceLength/Constants.MID_SHELF_SLIDER);
+
+    	pxarr[0] = ax[0];
+    	pxarr[1] = bx[0];
+    	pxarr[2] = bx[1];
+    	pxarr[3] = ax[1];
+
+    	pyarr[0] = midy;
+    	pyarr[1] = pyarr[0] - Constants.SHELF_DY;
+    	pyarr[2] = pyarr[1];
+    	pyarr[3] = pyarr[0];
+
+    	g.setColor( Constants.TOP_BOTTOM_COLOR );
+    	g.fillPolygon( pxarr, pyarr, 4 );
+
+    	shelves[0] = new Rectangle(bx[0], by[0], bx[1] - bx[0], pyarr[1] - by[0] + Constants.SHELF_DY/2 );
+    	shelves[1] = new Rectangle(bx[0], pyarr[0], bx[1] - bx[0], by[3] - pyarr[0] + Constants.SHELF_DY/2 );
+
+    	g.setColor( Color.BLACK );
+    	g.drawLine( pxarr[0], pyarr[0], pxarr[1], pyarr[1] );
+    	g.drawLine( pxarr[2], pyarr[2], pxarr[3], pyarr[3] );
+    	g.drawLine( ax[0], ay[0], bx[0], by[0] );
+    	g.drawLine( ax[1], ay[1], bx[1], by[1] );
+    	g.drawLine( ax[3], ay[3], bx[3], by[3] );
+    	g.drawLine( ax[2], ay[2], bx[2], by[2] );
+    	g.drawLine( ax[0], ay[0], ax[3], ay[3] );
+    	g.drawLine( ax[1], ay[1], ax[2], ay[2] );
+    	g.drawLine( ax[0], ay[0], ax[1], ay[1] );
+    	g.drawLine( ax[2], ay[2], ax[3], ay[3] );
+    	g.drawLine( bx[0], by[0], pxarr[1], pyarr[1] );
+    	g.drawLine( bx[1], by[1], pxarr[2], pyarr[2] );
+    	g.drawLine( pxarr[1], pyarr[1] + Constants.SHELF_DY, bx[3], by[3] );
+    	g.drawLine( pxarr[2], pyarr[2] + Constants.SHELF_DY, bx[2], by[2] );
+    	g.drawLine( pxarr[0], pyarr[0], pxarr[3], pyarr[3] );
+    	g.drawLine( pxarr[1], pyarr[1], pxarr[2], pyarr[2] );
+    	g.drawLine( bx[0], by[0], bx[1], by[1] );
+    	g.drawLine( bx[2], by[2], bx[3], by[3] );
+    }
+
+}

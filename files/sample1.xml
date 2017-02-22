@@ -1,0 +1,15 @@
+<?xml version="1.0"?>
+<Document>
+<Apparatus_Required>
+<Apparatus Type="Glassware" Subtype="Pipette" Name="Flask I" ChemicalName="SulphuricAcid" Formula="H2SO4" ContentHeight="20" Volume="4" Quantity="80" Molarity="1.0" id="I"></Apparatus>
+<Apparatus Type="Glassware" Subtype="RoundBottom" Name="Flask J" ChemicalName="SulphuricAcid" Formula="H2SO4" ContentHeight="20" Volume="20" Quantity="80" Molarity="1.0" id="J"></Apparatus>
+<Apparatus Type="Glassware" Subtype="Beaker" Name="Flask B" ChemicalName="NitricAcid" Formula="HNO3" ContentHeight="10" Volume="30" Quantity="30" Molarity="0.5" id="B"></Apparatus>
+<Apparatus Type="Glassware" Subtype="Burette" Name="Flask F" ChemicalName="SulphuricAcid" Formula="H2SO4" ContentHeight="20" Volume="20" Quantity="5" Molarity="1.0" id="A"></Apparatus>
+<Apparatus Type="Glassware" Subtype="Beaker" Name="Flask A" ChemicalName="SulphuricAcid" Formula="H2SO4" ContentHeight="30" Volume="40" Quantity="100" Molarity="1.0" id="G"></Apparatus>
+<Apparatus Type="Glassware" Subtype="Beaker" Name="Flask G" ChemicalName="NitricAcid" Formula="HNO3" ContentHeight="10" Volume="40" Quantity="30" Molarity="0.5" id="E"></Apparatus>
+<Apparatus Type="Glassware" Subtype="Beaker" Name="Flask C" ChemicalName="SulphuricAcid" Formula="H2SO4" ContentHeight="20" Volume="10" Quantity="80" Molarity="1.0" id="F"></Apparatus>
+<Apparatus Type="Nonglassware" Subtype="Burner" Name="Flask E" id="H"></Apparatus>
+</Apparatus_Required>
+<Activity>
+</Activity>
+</Document>

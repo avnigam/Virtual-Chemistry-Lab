@@ -1,0 +1,54 @@
+package ekshiksha.vclab.util;
+
+import java.awt.*;
+
+public class Constants {
+	
+ public static Color DEFAULT_OUTLINE_COLOR_FOR_LAB = Color.BLACK;
+ public static int TILE_SEPEEATION_AT_LOWEST_LEVEL = 75;
+ public static int TILT_ANGLE = 50;
+ public static int TILT_ANGLE_WALL = 50;
+ public static double FLOOR_LIMIT = 5;
+ public static Color TILE_COLOR_FIRST = new Color( 50, 50, 50 );
+ public static Color TILE_COLOR_SECOND = new Color(230, 230, 230);
+ public static int LENGTH_EDGE_HORIZONTAL_LINE = 30;
+ public static int TABLE_HEIGHT_FROM_EDGE_STARTINGS = 100;
+ public static double FRACTION_FIRST = 0.15;
+ public static double FRACTION_SECOND = 0.7;
+ public static int TABLE_CROSS_SECION_WIDTH = 30;
+ public static int EDGE_LEG_DISTANCE = 30;
+ public static int LEG_WIDTH = 40;
+ public static int FRONT_LEG_HEIGTH = 100;
+ public static Color LEG_COLOR = new Color(140, 80, 60 );
+ public static Color LEG_EFFECT = new Color( 151, 105, 79 );
+ public static int DISTANCE_RIGHT_EDGE_BASIN = 20;
+ public static int DISTANCE_BOTTOM_EDGE_BASIN = 40;
+ public static int BACK_LENGTH_BASIN = 60;
+ public static int BASIN_WIDTH = 40;
+ public static int TAP_THICKNESS = 8;
+ public static int TAP_HEIGHT = 70;
+ public static int TAP_WIDTH = 40;
+ public static Color TAP_COLOR = new Color( 192, 192, 192 );
+ public static Color WALL_COLOR = new Color(245, 229, 176 );
+ public static int SHELF_LENGTH = 295;
+ public static int TOP_SHELF_MARGIN = 60;
+ public static int BOTTOM_SHELF_MARGIN = 0;
+ public static int SHELF_DX = 50;
+ public static int SHELF_DY = 30;
+ public static Color TOP_BOTTOM_COLOR = new Color( 170, 170, 170 );
+ public static double MID_SHELF_SLIDER = 1.8;
+ public static int APPARATUS_SEPERATION = 6;
+ public static int TEXT_APP_TOP_DISTANCE = 10;
+ public static int FONT_SIZE = 9;
+ public static String FONT_NAME = "Monotype Corsiva";
+ public static int SEPERATION_BASINLEFT_PLCMNTEND = 20;
+ public static int DEMO = 1;
+ public static int EXP = 2;
+ public static Color FLAME_COLOR = Color.ORANGE;
+ public static double FLAME_INTENSITY_DECREAMENT = 0.1;
+ public static int MAX_FLAME_INTENSITY = 3;
+ public static int MAX_FLAME_HEIGHT = 20;
+ public static int DEFAULT_DELAY = 30;
+ public static int POUR_ACTIVITY = 1;
+ public static int HEAT_ACTIVITY = 2;
+}

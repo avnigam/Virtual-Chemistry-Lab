@@ -1,0 +1,167 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package ekshiksha.vclab.equipment;
+
+import java.awt.Color;
+import java.awt.Graphics;
+import java.awt.Point;
+
+
+/**
+ *
+ * @author mayank
+ */
+public class Equipment implements EquipmentType {
+    
+   
+    public int id;            //for holding index of equipments in equipment arraylist
+    public String type;       //for type of equipment
+    public String size;       // for size i.e.small,big,largs or extra large
+    public String equip_Name; // for holding equipment name
+    public String contents;   // for chemicals
+    public float quantity;    // for volume of content
+    public float strength;    // for molarity
+    public Color borderColor; //for border color of the equipment
+    public Point originShift; //for origin(initial position) of equipment
+    public float x; //for new location
+    public float y; //for new location
+    public int number;
+    public String position;
+
+    //Parameterized constructor
+    public Equipment(int id, String type,String size, String equip_Name, String contents, float quantity, float strength, float x, float y, String position) {
+            
+        this.id= id;
+        this.type= type;
+        this.size= size;
+        this.equip_Name= equip_Name;
+        this.contents= contents;
+        this.quantity= quantity;
+        this.strength= strength;
+        this.x= x;
+        this.y= y;
+        this.number= number;
+        this.position= position;
+    }
+
+    public Equipment(int id, String type,String size, String equip_Name, String contents, float quantity, float strength, int number, String position) {
+
+        this.id= id;
+        this.type= type;
+        this.size= size;
+        this.equip_Name= equip_Name;
+        this.contents= contents;
+        this.quantity= quantity;
+        this.strength= strength;
+        this.number= number;
+        this.position= position;
+    }
+    
+    //Getter and Setter
+    public void setId(int id) {
+        this.id = id;
+    }
+    public int getId() {
+        return id;
+    }
+
+    public void setType(String type) {
+        this.type = type;
+    }
+    public String getType() {
+        return type;
+    }
+
+    public void setSize(String size) {
+        this.size = size;
+    }
+    public String getSize() {
+        return size;
+    }
+
+    public void setEquip_Name(String equip_Name) {
+        this.equip_Name = equip_Name;
+    }
+    public String getEquip_Name() {
+        return equip_Name;
+    }
+
+    public void setContents(String contents) {
+        this.contents = contents;
+    }
+    public String getContents() {
+        return contents;
+    }
+
+    public void setQuantity(float quantity) {
+        this.quantity = quantity;
+    }
+    public float getQuantity() {
+        return quantity;
+    }
+
+    public void setStrength(float strength) {
+        this.strength = strength;
+    }
+    public float getStrength() {
+        return strength;
+    }
+
+     public void setX(int x){
+        this.x= x;
+    }
+    public float getX() {
+        return x;
+    }
+
+    public void setY(int y) {
+        this.y= y;
+    }
+    public float getY() {
+        return y;
+    }
+
+    public void setNumber(int number) {
+        this.number= number;
+    }
+    public int getNumber() {
+        return number;
+    }
+
+    public void setPosition(String position) {
+        this.position= position;
+    }
+    public String getPosition() {
+        return position;
+    }
+
+    //All methods starts from here...
+    public void initEquipment() {
+
+    }
+
+
+    public void drawEquipment(Graphics g) {
+
+    }
+
+
+    public void drawContents() {
+
+    }
+
+
+    public void executeMethods() {
+
+    }
+
+
+ //think over it
+    public boolean contains(int x, int y)  {
+       return false;
+   }
+    
+}

@@ -1,0 +1,769 @@
+package ekshiksha.vclab.parser;
+
+import java.util.ArrayList;
+import ekshiksha.vclab.activity.*;
+import ekshiksha.vclab.equipment.*;
+import ekshiksha.vclab.evaluation.Evaluation;
+import ekshiksha.vclab.header.*;
+import ekshiksha.vclab.observation.Observation;
+import ekshiksha.vclab.util.ErrorCode;
+import ekshiksha.vclab.util.Location;
+import java.io.BufferedReader;
+import java.io.DataInputStream;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.io.OutputStreamWriter;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
+import java.util.Stack;
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
+import javax.xml.parsers.SAXParser;
+import javax.xml.parsers.SAXParserFactory;
+import org.xml.sax.SAXException;
+import org.w3c.dom.Document;
+import org.w3c.dom.Element;
+import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
+import org.xml.sax.Attributes;
+import org.xml.sax.Locator;
+import org.xml.sax.SAXParseException;
+import org.xml.sax.helpers.DefaultHandler;
+
+
+public class ChemXML
+{
+  ArrayList Warnings = new ArrayList(); //array list to store warnings
+  ArrayList ErrorList = new ArrayList(); //array list to store error list
+  String[] sectionList = {"Header", "Setup", "Perform","Observation", "Evaluation"}; //default list of section
+  int Errorcode = ErrorCode.SUCCESS;  //initial error code is success
+  final static String LINE_NUMBER_KEY_NAME = "lineNumber";   //key name to find line number of xml element
+  ArrayList idlist = new ArrayList();     //arraylist to find duplicate id of equipment
+  /**
+   * This function parse the XML file and creates Header, Setup, Perform,
+   * Observation, Evaluation objects in memory
+   * @param ExperimentFile
+   * @return ErrorCode
+   */
+  public int readJournal(String ExperimentFile)
+  {
+    URL                url;       //URL object
+    URLConnection      urlConn;   //URLConnection object
+    final DataInputStream    dis;       //DataInputStream object
+    final Document doc;
+    final SAXParser parser;
+    try
+    {
+      url = new URL(ExperimentFile);     //get the URL of xml file
+      urlConn = url.openConnection();    //open the URL
+      urlConn.setDoInput(true); 
+      urlConn.setUseCaches(false);
+      dis = new DataInputStream(url.openStream());
+      SAXParserFactory factory = SAXParserFactory.newInstance();
+      parser = factory.newSAXParser();
+      DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
+      DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
+      doc = docBuilder.newDocument();
+      final Stack<Element> elementStack = new Stack<Element>();
+      final StringBuilder textBuffer = new StringBuilder();
+      final DefaultHandler handler = new DefaultHandler() {
+      private Locator locator;
+
+            @Override
+            public void setDocumentLocator(final Locator locator) {
+                this.locator = locator; // Save the locator, so that it can be used later for line tracking when traversing nodes.
+            }
+
+            @Override
+            public void startElement(final String uri, final String localName, final String qName, final Attributes attributes)
+                    throws SAXException {
+                addTextIfNeeded();
+                final Element el = doc.createElement(qName);
+                for (int i = 0; i < attributes.getLength(); i++) {
+                    el.setAttribute(attributes.getQName(i), attributes.getValue(i));
+                }
+                el.setUserData(LINE_NUMBER_KEY_NAME, String.valueOf(this.locator.getLineNumber()), null);
+                elementStack.push(el);
+            }
+
+            @Override
+            public void endElement(final String uri, final String localName, final String qName) {
+                addTextIfNeeded();
+                final Element closedEl = elementStack.pop();
+                if (elementStack.isEmpty()) { // Is this the root element?
+                    doc.appendChild(closedEl);
+                } else {
+                    final Element parentEl = elementStack.peek();
+                    parentEl.appendChild(closedEl);
+                }
+            }
+
+            @Override
+            public void characters(final char ch[], final int start, final int length) throws SAXException {
+                textBuffer.append(ch, start, length);
+            }
+
+            // Outputs text accumulated under the current node
+            private void addTextIfNeeded() {
+                if (textBuffer.length() > 0) {
+                    final Element el = elementStack.peek();
+                    final Node textNode = doc.createTextNode(textBuffer.toString());
+                    el.appendChild(textNode);
+                    textBuffer.delete(0, textBuffer.length());
+                }
+            }
+        };
+        parser.parse(dis, handler);
+
+      Errorcode = parseDocument(doc);    //call parseDocument to get errorcode with dom object
+
+    }catch(MalformedURLException mue){
+          ErrorList.add(mue.getMessage());  //add error malformed URL exception message in errorlist
+          Errorcode = ErrorCode.ERROR_FOUND;
+    }catch (IOException ioe){
+          ErrorList.add(ioe.getMessage());  //add IO exception message in errorlist
+          Errorcode = ErrorCode.ERROR_FOUND;
+    }catch (SAXParseException se) {
+          ErrorList.add(se.getMessage()+"on line number "+ se.getLineNumber());   //this exception for getting line number
+          Errorcode = ErrorCode.ERROR_FOUND;
+    }catch (ParserConfigurationException pce){
+          ErrorList.add(pce.getMessage());      //this exception for document build factory
+          Errorcode = ErrorCode.ERROR_FOUND;
+    }catch (SAXException se) {
+          Errorcode = ErrorCode.ERROR_FOUND;     //this exception for url openstream
+          ErrorList.add(se.getMessage());
+    }
+    return Errorcode; //return error code
+}
+  /**
+   * This function gives list of warnings
+   * @return Warnings
+   */
+  public ArrayList getWarning(){
+      return Warnings;
+  }
+  /**
+   * This function gives list of errors
+   * @return Error list
+   */
+  public ArrayList getError(){
+      return ErrorList;
+  }
+
+  /**
+   * This function gets document object and parse xml file. it returns error code
+   * @param dom
+   * @return
+   */
+  public int parseDocument(Document doc)
+  {
+      Element docEle = doc.getDocumentElement(); //get root element
+      for(int i=0;i<sectionList.length; i++)
+      {
+         NodeList secElement = docEle.getElementsByTagName(sectionList[i]);
+         if(secElement.getLength() == 0){
+             Errorcode = ErrorCode.ERROR_FOUND;
+             ErrorList.add("Mandatory "+ sectionList[i] +" section missing" );
+         }
+         if(secElement.getLength()>1){
+            Errorcode = ErrorCode.ERROR_FOUND;
+            for(int j = 0;j < secElement.getLength(); j++){
+                Node node = doc.getElementsByTagName(sectionList[i]).item(j);
+                ErrorList.add("Duplicate "+ sectionList[i] +" tag found on line " + node.getUserData(LINE_NUMBER_KEY_NAME));
+            }
+         }
+         if(secElement.getLength()==1){
+             Element secEl = (Element)secElement.item(0);//get the header element
+             if(sectionList[i].equals("Header")){
+                Header header = getHeader(secEl);//get the Employee object
+             }
+             if(sectionList[i].equals("Setup")){
+                 //get the Equipment object list
+                 ArrayList<Equipment> setup = getSetup(secEl);
+                 Equipments.setEquipments(setup);
+             }
+             if(sectionList[i].equals("Perform")){
+                 //get the activity object list
+                 ArrayList<Activity> perform = getPerform(secEl);
+                 Activities.setActivities(perform);
+             }
+             if(sectionList[i].equals("Observation")){
+                Observation observation = getObservation(secEl);
+             }
+             if(sectionList[i].equals("Evaluation")){
+                Evaluation evaluation = getEvaluation(secEl);
+             }
+         }
+      }
+      return Errorcode;
+  }
+  /**
+   * This function returns header object.
+   * @param headerEl
+   * @return header object
+   */
+  public Header getHeader(Element headerEl)
+  {
+      Header header = null;
+      int tempmark = 0;
+      String title = getTextValue(headerEl,"Title");   //get the title value from xml
+      String author = getTextValue(headerEl, "Author"); //get the author name from xml
+      String level = getTextValue(headerEl, "Level");   //get the level value from xml
+      String marks = getTextValue(headerEl, "Marks");   //get marks from xml
+      String description = getTextValue(headerEl, "Description");  //get description value from xml
+      String student = getTextValue(headerEl, "Student");   //get student name from xml
+      if(title == null && author == null && level == null && marks == null && description == null && student == null)
+      {
+          Errorcode = ErrorCode.WARNINGS_FOUND;
+          Warnings.add("Empty " + headerEl.getNodeName() + " section found on line " + headerEl.getUserData(LINE_NUMBER_KEY_NAME));
+      }else{
+       try{
+            tempmark = Integer.parseInt(marks);
+          }catch(NumberFormatException nfe){
+            Errorcode = ErrorCode.ERROR_FOUND;
+            ErrorList.add(headerEl.getNodeName() + "'s value is not correct format on line "+ headerEl.getUserData(LINE_NUMBER_KEY_NAME));
+          }
+       header = new Header(title, author, level, tempmark, description, student);
+      }
+      return header;
+  }
+  /**
+   * This function returns string value xml tag
+   * @param ele
+   * @param tagName
+   * @return
+   */
+  public String getTextValue(Element ele, String tagName)
+  {
+      String textVal = null;
+      NodeList nl = ele.getElementsByTagName(tagName);
+      if(nl.getLength() == 0)
+      {
+          Errorcode = ErrorCode.ERROR_FOUND;
+          ErrorList.add("Mandatry "+ tagName +" tag missing");
+      }
+      if(nl.getLength() > 1)
+      {
+          for(int j = 0;j < nl.getLength(); j++){
+                Node node = nl.item(j);
+                Errorcode = ErrorCode.ERROR_FOUND;
+                ErrorList.add("Duplicate "+ tagName +" tag found on line " + node.getUserData(LINE_NUMBER_KEY_NAME));
+            }
+      }
+      if(nl.getLength() == 1)
+      {
+          Element el = (Element)nl.item(0);
+          try{
+               textVal = el.getFirstChild().getNodeValue();
+          }catch(NullPointerException npe){
+              Errorcode = ErrorCode.ERROR_FOUND;
+              Node node = nl.item(0);
+              ErrorList.add(tagName + " contains null value on line "+ node.getUserData(LINE_NUMBER_KEY_NAME));
+          }
+      }
+      return textVal;
+  }
+
+  /**
+   * This function gives observation object
+   * @param observationEl
+   * @return
+   */
+  public Observation getObservation(Element observationEl)
+  {
+      Observation observation = null;
+      String remarks = "";
+      NodeList nl = observationEl.getChildNodes();
+      for(int i = 0 ; i < nl.getLength();i++)
+      {
+          if(nl.item(i).toString().contains("Remarks"))
+          {
+            Element el = (Element)nl.item(i);//get the remarks element
+            try{
+                remarks = remarks + "|" + el.getFirstChild().getNodeValue();
+              }catch(NullPointerException npe){
+                  Errorcode = ErrorCode.ERROR_FOUND;
+                  ErrorList.add(observationEl.getNodeName() + " contains null value on line "+ observationEl.getUserData(LINE_NUMBER_KEY_NAME));
+              }
+          }
+      }
+      if(remarks.equals(""))
+      {
+          Errorcode = ErrorCode.WARNINGS_FOUND;
+          Warnings.add("Empty " + observationEl.getNodeName() + " section found on line " + observationEl.getUserData(LINE_NUMBER_KEY_NAME));
+      }else{
+            String[] temp = remarks.split("|");
+            observation = new Observation(temp);
+      }
+       return observation;
+  }
+
+ 
+   /**
+    * This function gives evaluation object
+    * @param evaluationEl
+    * @return
+    */
+   public Evaluation getEvaluation(Element evaluationEl)
+  {
+      Evaluation evaluation = null;
+      String remarks = "";
+      String marks = "";
+      int tempmark = 0;
+      NodeList nl = evaluationEl.getChildNodes();
+      for(int i = 0 ; i < nl.getLength();i++)
+      {
+        if(nl.item(i).toString().contains("Marks"))
+        {
+           Element el = (Element)nl.item(i);
+	   try{
+               marks = el.getFirstChild().getNodeValue();
+               tempmark = Integer.parseInt(marks);
+            }catch(NullPointerException npe){
+                Errorcode = ErrorCode.ERROR_FOUND;
+                ErrorList.add(el.getNodeName() + " contains null value on line "+ el.getUserData(LINE_NUMBER_KEY_NAME));
+            }catch(NumberFormatException nfe){
+                ErrorList.add(el.getNodeName() + "'s value is not correct format on line "+ el.getUserData(LINE_NUMBER_KEY_NAME));
+            }
+        }
+        if(nl.item(i).toString().contains("Remarks"))
+        {
+          Element el = (Element)nl.item(i);
+          try{
+          remarks = remarks + "|"+ el.getFirstChild().getNodeValue();
+            }catch(NullPointerException npe){
+                Errorcode = ErrorCode.ERROR_FOUND;
+                ErrorList.add(el.getNodeName() + " contains null value on line "+ el.getUserData(LINE_NUMBER_KEY_NAME));
+            }
+        }
+      }
+      if(marks.equals("") && remarks.equals("")){
+          Errorcode = ErrorCode.WARNINGS_FOUND;
+          Warnings.add("Empty " + evaluationEl.getNodeName() + " section found on line " + evaluationEl.getUserData(LINE_NUMBER_KEY_NAME));
+      }else{
+          String[] temp = remarks.split("|");
+          evaluation = new Evaluation(tempmark, temp);
+      }
+      return evaluation;
+  }
+
+  /**
+   * This function returns arraylist of equipment object
+   * @param setupEl
+   * @return
+   */
+  public ArrayList<Equipment> getSetup(Element setupEl)
+  {
+      ArrayList<Equipment> setup = Equipments.getEquipments();
+      NodeList nl = setupEl.getElementsByTagName("Equipment");
+      if(nl.getLength() > 0)
+      {
+        for(int i = 0 ; i < nl.getLength();i++)
+        {
+          Element el = (Element)nl.item(i);
+          Equipment e = getEquipment(el);
+          setup.add(e);
+	}
+        
+      }
+      else{
+          Errorcode = ErrorCode.WARNINGS_FOUND;
+          Warnings.add("Empty "+ setupEl.getNodeName() + "section on line " + setupEl.getUserData(LINE_NUMBER_KEY_NAME));
+      }
+      return setup;
+  }
+
+
+  /**
+   * This function returns array list of activity object
+   * @param performEl
+   * @return
+   */
+  public ArrayList<Activity> getPerform(Element performEl)
+  {
+      ArrayList<Activity> perform = Activities.getActivities();
+      NodeList nl = performEl.getElementsByTagName("Activity");
+      if(nl.getLength() > 0)
+      {
+        for(int i = 0 ; i < nl.getLength();i++)
+        {
+          Element el = (Element)nl.item(i);
+	  Activity e = getActivity(el);
+	  perform.add(e);
+	}
+      }
+      else{
+          Errorcode = ErrorCode.WARNINGS_FOUND;
+          Warnings.add("Empty "+ performEl.getNodeName() + "section on line " + performEl.getUserData(LINE_NUMBER_KEY_NAME));
+      }
+      return perform;
+  }
+
+  /**
+   * This returns single equipment object 
+   * @param equipmentEl
+   * @return
+   */
+  public Equipment getEquipment(Element equipmentEl)
+  {
+      Equipment equipment = null;
+      String id = null;
+      int tempid = 0;
+      String type = null;
+      String size = null;
+      String name = null;
+      String contents = null;
+      Float quantity = 0.0f;
+      Float strength = 0.0f;
+      String location = null;
+      
+      try
+      {
+        if(equipmentEl.hasAttribute("Id")){
+             id = equipmentEl.getAttribute("Id");
+             tempid = Integer.parseInt(id);
+             if(idlist.contains(tempid)){
+                 Errorcode = ErrorCode.ERROR_FOUND;
+                 ErrorList.add("Duplicate id found on line "+ equipmentEl.getUserData(LINE_NUMBER_KEY_NAME));
+             }else{
+                 idlist.add(tempid);
+             }
+         }else{
+             Errorcode = ErrorCode.ERROR_FOUND;
+             ErrorList.add("Mandatory attribute 'Id' missing on line " + equipmentEl.getUserData(LINE_NUMBER_KEY_NAME));
+         }
+        if(equipmentEl.hasAttribute("Type")){
+             type = equipmentEl.getAttribute("Type");
+             if(!type.equals("Bottle") && !type.equals("Beaker") && !type.equals("Flask") && !type.equals("Pipette") && !type.equals("Burette") && !type.equals("Burner"))
+             {
+                 Errorcode = ErrorCode.ERROR_FOUND;
+                 ErrorList.add("'Type' attribute of "+ equipmentEl.getNodeName() + " contains unknown type value on line " + equipmentEl.getUserData(LINE_NUMBER_KEY_NAME));
+             }
+         }else{
+             Errorcode = ErrorCode.ERROR_FOUND;
+             ErrorList.add("Mandatory attribute 'Type' missing on line " + equipmentEl.getUserData(LINE_NUMBER_KEY_NAME));
+         }
+        if(equipmentEl.hasAttribute("Size")){
+             size = equipmentEl.getAttribute("Size");
+             if(!size.equals("eXtraSmall") && !size.equals("Small") && !size.equals("Large") && !size.equals("Medium") && !size.equals("eXtraLarge") )
+             {
+                 Errorcode = ErrorCode.ERROR_FOUND;
+                 ErrorList.add("Size attribute of "+ equipmentEl.getNodeName() + " contains unknown size value on line " + equipmentEl.getUserData(LINE_NUMBER_KEY_NAME));
+             }
+         }else{
+             Errorcode = ErrorCode.ERROR_FOUND;
+             ErrorList.add("Mandatory attribute 'Size' missing on line " + equipmentEl.getUserData(LINE_NUMBER_KEY_NAME));
+         }
+        if(equipmentEl.hasAttribute("Name")){
+             name = equipmentEl.getAttribute("Name");
+         }else{
+             Errorcode = ErrorCode.ERROR_FOUND;
+             ErrorList.add("Mandatory attribute 'Name' of "+ equipmentEl.getNodeName() + " missing on line " + equipmentEl.getUserData(LINE_NUMBER_KEY_NAME));
+         }
+        if(equipmentEl.hasAttribute("Location"))
+        {
+             location = equipmentEl.getAttribute("Location");
+             Location.parseString(location);
+             if(!Location.getPosition().equalsIgnoreCase(Location.TABLE) && !Location.getPosition().equalsIgnoreCase(Location.SHELFTOP))
+             {
+                Errorcode = ErrorCode.ERROR_FOUND;
+                ErrorList.add("Invalid Location found on line "+ equipmentEl.getUserData(LINE_NUMBER_KEY_NAME));
+             }
+         }else{
+             Errorcode = ErrorCode.ERROR_FOUND;
+             ErrorList.add("Mandatory attribute 'Location' of "+ equipmentEl.getNodeName() + " missing on line " + equipmentEl.getUserData(LINE_NUMBER_KEY_NAME));
+         }
+        if(equipmentEl.hasAttribute("Contents")){
+            contents = equipmentEl.getAttribute("Contents");
+        }
+        if(equipmentEl.hasAttribute("Quantity")){
+            quantity = Float.valueOf(equipmentEl.getAttribute("Quantity").trim()).floatValue();
+        }
+        if(equipmentEl.hasAttribute("Strength")){
+            strength = Float.valueOf(equipmentEl.getAttribute("Strength").trim()).floatValue();
+        }
+      }catch(NullPointerException npe){
+              Errorcode = ErrorCode.ERROR_FOUND;
+              ErrorList.add(equipmentEl.getNodeName() + "'s attribute has null value on line "+ equipmentEl.getUserData(LINE_NUMBER_KEY_NAME));
+      }catch(NumberFormatException nfe){
+              Errorcode = ErrorCode.ERROR_FOUND;
+              ErrorList.add(equipmentEl.getNodeName() + "'s attribute has null value or unknown format on line "+ equipmentEl.getUserData(LINE_NUMBER_KEY_NAME));
+      }
+
+      if (type.equals("Bottle"))
+      {
+          if(Location.getPosition().equals(Location.TABLE)) {
+              equipment = new Bottle(tempid, type, size, name, contents, quantity, strength, Location.getX(),Location.getY(),Location.getPosition());
+          } else if(Location.getPosition().equals(Location.SHELFTOP)) {
+              equipment = new Bottle(tempid, type, size, name, contents, quantity, strength, Location.getNumber(),Location.getPosition());
+          }
+
+      }
+      if (type.equals("Beaker"))
+      {
+          if(Location.getPosition().equals(Location.TABLE)) {
+              equipment = new Beaker(tempid, type, size, name, contents, quantity, strength, Location.getX(),Location.getY(),Location.getPosition());
+          } else if(Location.getPosition().equals(Location.SHELFTOP)) {
+              equipment = new Beaker(tempid, type, size, name, contents, quantity, strength, Location.getNumber(),Location.getPosition());
+          }
+      }
+      if (type.equals("Flask"))
+      {
+          if(Location.getPosition().equals(Location.TABLE)) {
+              equipment = new Flask(tempid, type, size, name, contents, quantity, strength, Location.getX(),Location.getY(),Location.getPosition());
+          } else if(Location.getPosition().equals(Location.SHELFTOP)) {
+              equipment = new Flask(tempid, type, size, name, contents, quantity, strength, Location.getNumber(),Location.getPosition());
+          }
+      }
+      if (type.equals("Pipette"))
+      {
+          if(Location.getPosition().equals(Location.TABLE)) {
+              equipment = new Pipette(tempid, type, size, name, contents, quantity, strength, Location.getX(),Location.getY(),Location.getPosition());
+          } else if(Location.getPosition().equals(Location.SHELFTOP)) {
+              equipment = new Pipette(tempid, type, size, name, contents, quantity, strength, Location.getNumber(),Location.getPosition());
+          }
+      }
+      if (type.equals("Burette"))
+      {
+          if(Location.getPosition().equals(Location.TABLE)) {
+              equipment = new Burette(tempid, type, size, name, contents, quantity, strength, Location.getX(),Location.getY(),Location.getPosition());
+          } else if(Location.getPosition().equals(Location.SHELFTOP)) {
+              equipment = new Burette(tempid, type, size, name, contents, quantity, strength, Location.getNumber(),Location.getPosition());
+          }
+      }
+      if (type.equals("Burner"))
+      {
+          if(Location.getPosition().equals(Location.TABLE)) {
+              equipment = new Burner(tempid, type, size, name, contents, quantity, strength, Location.getX(),Location.getY(),Location.getPosition());
+          } else if(Location.getPosition().equals(Location.SHELFTOP)) {
+              equipment = new Burner(tempid, type, size, name, contents, quantity, strength, Location.getNumber(),Location.getPosition());
+          }
+      }
+      return equipment;
+  }
+
+  /**
+   * This gives single activity object
+   * @param activityEl
+   * @return
+   */
+  public Activity getActivity(Element activityEl)
+  {
+      Activity activity = null;
+      int id = 0;
+      String type = null;
+      int sourceid = 0;
+      int destinationid = 0;
+      Float quantity = 0.0f;
+      String location = null;
+      String label = null;
+
+      try
+      {
+      if(activityEl.hasAttribute("Type"))
+      {
+          type = activityEl.getAttribute("Type");
+          if(!type.equals("Move") && !type.equals("Pour") && !type.equals("Label") && !type.equals("Wash"))
+          {
+             Errorcode = ErrorCode.ERROR_FOUND;
+             ErrorList.add("'Type' attribute of "+ activityEl.getNodeName() + " contains unknown type value on line " + activityEl.getUserData(LINE_NUMBER_KEY_NAME));
+          }
+          else
+          {
+           if (type.equals("Move"))
+           {
+             if(activityEl.hasAttribute("Id")){
+                 id = Integer.parseInt(activityEl.getAttribute("Id"));
+             }else{
+                 Errorcode = ErrorCode.ERROR_FOUND;
+                 ErrorList.add("Mandatory attribute 'Id' missing on line "+ activityEl.getUserData(LINE_NUMBER_KEY_NAME));
+             }
+             if(activityEl.hasAttribute("Location"))
+             {
+                 location = activityEl.getAttribute("Location");
+             }else{
+                 Errorcode = ErrorCode.ERROR_FOUND;
+                 ErrorList.add("Mandatory attribute 'Location' missing on line "+ activityEl.getUserData(LINE_NUMBER_KEY_NAME));
+             }
+             Location.parseString(location);
+             if(Location.getPosition().equals(Location.TABLE))
+             {
+                 activity = new Move(type, id, Location.getX(),Location.getY(),Location.getPosition());
+             } else if(Location.getPosition().equals(Location.SHELFTOP))
+             {
+                 activity = new Move(type, id, Location.getNumber(),Location.getPosition());
+             }
+           }
+          if (type.equals("Pour"))
+          {
+             if(activityEl.hasAttribute("SourceId")){
+                 sourceid = Integer.parseInt(activityEl.getAttribute("SourceId"));
+             }else{
+                 Errorcode = ErrorCode.ERROR_FOUND;
+                 ErrorList.add("Mandatory attribute 'SourceId' missing on line "+ activityEl.getUserData(LINE_NUMBER_KEY_NAME));
+             }
+             if(activityEl.hasAttribute("DestinationId"))
+             {
+                 destinationid = Integer.parseInt(activityEl.getAttribute("DestinationId"));
+             }else{
+                 Errorcode = ErrorCode.ERROR_FOUND;
+                 ErrorList.add("Mandatory attribute 'DestinationId' missing on line "+ activityEl.getUserData(LINE_NUMBER_KEY_NAME));
+             }
+             if(activityEl.hasAttribute("Quantity"))
+             {
+                 quantity = Float.parseFloat(activityEl.getAttribute("Quantity"));
+             }else{
+                 Errorcode = ErrorCode.ERROR_FOUND;
+                 ErrorList.add("Mandatory attribute 'Quantity' missing on line "+ activityEl.getUserData(LINE_NUMBER_KEY_NAME));
+             }
+             activity = new Pour(type, sourceid, destinationid, quantity);
+          }
+          if (type.equals("Label"))
+          {
+             if(activityEl.hasAttribute("Id")){
+                 id = Integer.parseInt(activityEl.getAttribute("Id"));
+             }else{
+                 Errorcode = ErrorCode.ERROR_FOUND;
+                 ErrorList.add("Mandatory attribute 'Id' missing on line "+ activityEl.getUserData(LINE_NUMBER_KEY_NAME));
+             }
+             if(activityEl.hasAttribute("Label"))
+             {
+                 label = activityEl.getAttribute("Label");
+             }else{
+                 Errorcode = ErrorCode.ERROR_FOUND;
+                 ErrorList.add("Mandatory attribute 'Label' missing on line "+ activityEl.getUserData(LINE_NUMBER_KEY_NAME));
+             }
+             activity = new Label(type, id, label);
+          }
+          if (type.equals("Wash"))
+          {
+             if(activityEl.hasAttribute("Id")){
+                 id = Integer.parseInt(activityEl.getAttribute("Id"));
+             }else{
+                 Errorcode = ErrorCode.ERROR_FOUND;
+                 ErrorList.add("Mandatory attribute 'Id' missing on line "+ activityEl.getUserData(LINE_NUMBER_KEY_NAME));
+             }
+             activity = new Wash(type,id);
+          }
+         }
+      }else{
+          Errorcode = ErrorCode.ERROR_FOUND;
+          ErrorList.add("Mandatory attribute 'Type' missing on line "+ activityEl.getUserData(LINE_NUMBER_KEY_NAME));
+      }
+      }catch(NullPointerException npe){
+              Errorcode = ErrorCode.ERROR_FOUND;
+              ErrorList.add(activityEl.getNodeName() + "'s attribute has null value on line "+ activityEl.getUserData(LINE_NUMBER_KEY_NAME));
+      }catch(NumberFormatException nfe){
+              Errorcode = ErrorCode.ERROR_FOUND;
+              ErrorList.add(activityEl.getNodeName() + "'s attribute has null value or unknown format on line "+ activityEl.getUserData(LINE_NUMBER_KEY_NAME));
+      }
+      return activity;
+  }
+
+  /**
+   * This function creates xml file in server
+   * @param servletURL
+   * @param header
+   * @param setup
+   * @param perform
+   * @param observation
+   * @param evaluation
+   * @param newFileName
+   * @return
+   */
+  public int writeXML(String servletURL, Header header, ArrayList<Equipment> setup, ArrayList<Activity> perform, Observation observation, Evaluation evaluation,  String newFileName)
+  {
+      Errorcode = ErrorCode.SUCCESS;
+      String urlParameters;
+      String filename;
+      URL url;
+      HttpURLConnection connection = null;
+      try 
+      {
+        url = new URL(servletURL);
+        connection = (HttpURLConnection)url.openConnection();
+        connection.setRequestMethod("POST");
+        connection.setRequestProperty("Content-Type", "application/x-www-form-urlencoded");
+        filename = newFileName+"|";
+        urlParameters = filename + createXMLString(header, setup, perform, observation, evaluation);
+        connection.setRequestProperty("Content-Length", "" + Integer.toString(urlParameters.getBytes().length));
+        connection.setRequestProperty("Content-Language", "en-US");
+        connection.setUseCaches (false);
+        connection.setDoInput(true);
+        connection.setDoOutput(true);
+        //Send request
+        OutputStreamWriter wr = new OutputStreamWriter(connection.getOutputStream());
+        wr.write(urlParameters);
+        wr.flush ();
+        // Get the response
+        BufferedReader rd = new BufferedReader(new InputStreamReader(connection.getInputStream()));
+        String line;
+        line = rd.readLine();
+        if(line.equals("Journal_xml_created_successfully"))
+        {
+              Errorcode = ErrorCode.SUCCESS;
+        }
+        else
+        {
+              Errorcode = ErrorCode.ERROR_FOUND;
+              ErrorList.add("File is not created");
+        }
+
+         wr.close();
+         rd.close();
+
+
+       } catch (Exception e) {
+             Errorcode = ErrorCode.ERROR_FOUND;
+             ErrorList.add("Server not response");
+    }
+      return Errorcode;
+  }
+
+  public String createXMLString(Header header, ArrayList<Equipment> setup, ArrayList<Activity> perform, Observation observation, Evaluation evaluation)
+  {
+      String JournalXML = "";
+      String headerString = "";
+      String setupString = "";
+      String performString = "";
+      String observationString = "";
+      String evaluationString = "";
+
+      headerString = "\n<Header>\n <Title>"+ header.getTitle() + "\n" +
+                     "<Author>" + header.getAuthor_Name() + "\n" +
+                     "<Level>" + header.getLevel() + "\n" +
+                     "<Marks>"+ header.getMarks() + "\n" +
+                     "<Description>"+header.getDescription() + "\n" +
+                     "<Student>"+ header.getStudent_Name() +"\n"+
+                     "</Header>";
+
+      for(int i=0;i<setup.size();i++)
+      {
+          String Equipmentloop ="";
+          Equipment equip = setup.get(i);
+          Equipmentloop = "\n"+ "      <Equipment "+ "Id = "+'"' + equip.getId()+ '"'+
+                                   " Type = "+'"' + equip.getType()+ '"'+
+                                   " Size = "+'"' + equip.getSize()+ '"'+
+                                   " Name = "+'"' + equip.getEquip_Name()+ '"'+
+                                   " Contents = "+'"' + equip.getContents()+ '"'+
+                                   " Quantity = "+'"' + equip.getQuantity()+ '"'+
+                                   " Strength = "+'"' + equip.getStrength()+ '"'+
+                                   
+                                       ">" + "</Equipment>"  ;
+
+           setupString = setupString + Equipmentloop;
+      }
+      setupString = "\n<Setup>" + setupString + "\n</Setup>";
+            
+
+
+                
+      JournalXML = "<?xml version=\"1.0\" encoding=\"utf-8\" ?>"+ "\n" +
+                    "<Experiment>" + "\n" + headerString + "\n" + setupString +"\n" +
+                    "</Experiment>";
+      return JournalXML;
+  }
+}

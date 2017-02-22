@@ -1,0 +1,47 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package ekshiksha.vclab.activity;
+/**
+ *
+ * @author asl
+ */
+public class Activity implements ActivityType {
+
+    public String type;             //for activity type i.e. move,pour etc.
+   
+    public Activity(String type) {
+            this.type=type;
+    }
+    public Activity(){
+
+    }
+    
+    //Setter and getter methods
+    public void setType(String type){
+        this.type = type;
+    }
+
+    public String getType(){
+        return type;
+    }
+
+    //Method for executing different activities
+    public void execute(){
+      //implementation code goes here
+    }
+
+    //Method for exporting the xml
+    public void exportXml(){
+      //code goes here
+    }
+
+    //Method to save the states of the activities
+    public void saveState(){
+      //code goes here
+    }
+
+
+}

@@ -1,0 +1,58 @@
+<Experiment>
+<Header>
+<Title>Preparation of solution of known molarity</Title>
+<Author>EkShiksha</Author>
+<Level>CBSE Standard IX</Level>
+<Marks>100</Marks>
+<Description>Prepare a solution of 0.1M Sulphuric Acid\nGiven : 1M Sulphuric Acid\nGiven : Water\nPrepared solution to be stored in a bottle and labeled appropriately.</Description>
+<Student>A B C</Student>
+</Header>
+<Setup>
+<Equipment Id="0" Type="Bottle" Size="eXtraSmall" Name="Bo3" Contents="Acetic Acid" Quantity="50" Strength="1" Location="Shelf Top 3"></Equipment>
+<Equipment Id="1" Type="Bottle" Size="Small" Name="Bo4" Contents="Nitric Acid" Quantity="100" Strength="1" Location="Shelf Top 4"></Equipment>
+<Equipment Id="2" Type="Bottle" Size="Large" Name="Bo1" Contents="Sulphuric Acid" Quantity="400" Strength="0.50" Location="Shelf Top 1"></Equipment>
+<Equipment Id="3" Type="Bottle" Size="Medium" Name="Bo2" Contents="Hydrochloric Acid" Quantity="200" Strength="0.50" Location="Shelf Top 2"></Equipment>
+<Equipment Id="4" Type="Bottle" Size="eXtraLarge" Name="Bo5" Contents="Water" Quantity="1000" Strength="1" Location="Table 0.1,0.7"></Equipment>
+<Equipment Id="7" Type="Bottle" Size="Large" Name="Bo6" Location="Shelf Top 5"></Equipment>
+<Equipment Id="8" Type="Beaker" Size="eXtraSmall" Name="Be3" Location="Table 0.20,0.7"></Equipment>
+<Equipment Id="9" Type="Beaker" Size="Small" Name="Be4" Location="Table 0.25,0.7"></Equipment>
+<Equipment Id="5" Type="Beaker" Size="Large" Name="Be1" Location="Table 0.30,0.7"></Equipment>
+<Equipment Id="6" Type="Beaker" Size="Medium" Name="Be2" Location="Table 0.35,0.7"></Equipment>
+<Equipment Id="10" Type="Beaker" Size="eXtraLarge" Name="Be5" Location="Table 0.40,0.7"></Equipment>
+<Equipment Id="12" Type="Flask" Size="eXtraSmall" Name="F3" Location="Table 0.50,0.7"></Equipment>
+<Equipment Id="14" Type="Flask" Size="Small" Name="F4" Location="Table 0.55,0.7"></Equipment>
+<Equipment Id="11" Type="Flask" Size="Large" Name="F1" Location="Table 0.60,0.7"></Equipment>
+<Equipment Id="13" Type="Flask" Size="Medium" Name="F2" Location="Table 0.65,0.7"></Equipment>
+<Equipment Id="15" Type="Flask" Size="eXtraLarge" Name="F5" Location="Table 0.70,0.7"></Equipment>
+<Equipment Id="18" Type="Pipette" Size="Small" Name="P2" Location="Table 0.1,0.75"></Equipment>
+<Equipment Id="16" Type="Pipette" Size="Medium" Name="P1" Location="Table 0.1,0.8"></Equipment>
+<Equipment Id="17" Type="Pipette" Size="Large" Name="P3" Location="Table 0.1,0.85"></Equipment>
+<Equipment Id="19" Type="Burette" Size="Medium" Name="Bu1" Location="Table 0.1,0.9"></Equipment>
+<Equipment Id="20" Type="Burner" Size="Medium" Name="B1" Location="Table 0.4,0.8"></Equipment>
+</Setup>
+<Perform>
+<Activity Type="Move" Id="5" Location="Table 0.5,0.5"></Activity>
+<Activity Type="Move" Id="2" Location="Table 0.5,0.6"></Activity>
+<Activity Type="Pour" SourceId="2" DestinationId="5" Quantity="10"></Activity>
+<Activity Type="Move" Id="2" Location="Shelf Top 1"></Activity>
+<Activity Type="Move" Id="4" Location="Table 0.5,0.6"></Activity>
+<Activity Type="Pour" SourceId="4" DestinationId="5" Quantity="90"></Activity>
+<Activity Type="Move" Id="4" Location="Table 0.1,0.7"></Activity>
+<Activity Type="Move" Id="7" Location="Table 0.5,0.6"></Activity>
+<Activity Type="Pour" SourceId="5" DestinationId="7" Quantity="100"></Activity>
+<Activity Type="Label" Id="7" Label="Sulphuric Acid 0.1M"></Activity>
+<Activity Type="Move" Id="7" Location="Shelf Top 5"></Activity>
+<Activity Type="Wash" Id="5"></Activity>
+<Activity Type="Move" Id="5" Location="Table 0.3,0.7"></Activity>
+</Perform>
+<Observation>
+<Remarks>10 ml of 1M Sulphuric Acid mixed with 90 ml of water produced 100ml of 0.1M Sulphuric acid.</Remarks>
+</Observation>
+<Evaluation>
+<Marks>50</Marks>
+<Remarks>List of Errors.</Remarks>
+<Remarks>List of Errors.</Remarks>
+<Remarks>List of Errors.</Remarks>
+<Remarks>List of Errors.</Remarks>
+</Evaluation>
+</Experiment>

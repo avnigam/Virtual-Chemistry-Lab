@@ -1,0 +1,582 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package ekshiksha.vclab.lab;
+/**
+ *
+ * @author asl
+ */
+import java.awt.*;
+import ekshiksha.vclab.equipment.Equipment;
+import ekshiksha.vclab.equipment.Equipments;
+import ekshiksha.vclab.util.Constants;
+import java.io.*;
+import javax.swing.*;
+import java.awt.event.*;
+import java.util.*;
+
+public class WorkBench extends JPanel implements Serializable, MouseListener, MouseMotionListener {
+
+	private Vector< Line >hlines;
+        public static  ArrayList<Equipment> equipments;//new for test
+	private Rectangle shelves[];
+	private Point[]table;
+	private Point plcmntStart, plcmntEnd;
+        Color borderColor = Color.BLUE;
+        public boolean canMove;
+        public int currentIndex;
+        //Table tab;
+        //Shelf shelf;
+        //Basin basin;
+
+        public WorkBench()
+	{
+	        //newly added code
+                setBounds( 0, 0, 700, 800 );
+		setLayout( null );
+                ImageIcon icon = new ImageIcon("./Images/hand.gif");
+	        setCursor( Toolkit.getDefaultToolkit().createCustomCursor(icon.getImage(), new Point(0,0), "Hand"));
+		this.addMouseMotionListener( this );
+		this.addMouseListener( this );
+                this.setPreferredSize(new Dimension(700,800));
+                //newly added code
+		hlines = new Vector< Line >();
+                equipments= new ArrayList<Equipment>();//new for test
+		shelves = new Rectangle[2];
+		table = new Point[4];
+                //tab = new Table(this);
+                //shelf = new Shelf(this);
+                //basin = new Basin(this);
+	 }
+	
+    @Override
+    public void paintComponent( Graphics g )
+    {
+        super.paintComponent( g );
+    	setBackground( Constants.WALL_COLOR );
+        drawLab( g );
+        //Newly added code
+        for(int i=0;i<Equipments.getEquipments().size(); i++)
+        {
+            Equipment equipment = Equipments.getEquipments().get(i);
+            
+            equipment.drawEquipment(g);
+            
+        }		
+    	
+    }
+    
+    public void drawLab( Graphics g )
+    {
+    	Vector< Vector < Point > > polygon = new Vector< Vector< Point > > ();
+    	polygon = getTileCoordinates();
+        fillTiles( polygon, g);
+        //tab.drawTable( g ); //new one
+        drawTable(g);
+        //shelf.drawShelf( g ); //new one
+        drawShelf(g);
+        //basin.drawBasin( g ); //new one
+        drawBasin(g);
+    }
+
+    public void drawShelf( Graphics g )
+    {
+         int ax[] = new int[4];
+    	int ay[] = new int[4];
+
+    	int bx[] = new int[4];
+    	int by[] = new int[4];
+
+    	ax[0] = table[1].x;
+    	ax[1] = table[2].x;
+    	ax[2] = ax[1];
+    	ax[3] = ax[0];
+
+    	ay[0] = Constants.TOP_SHELF_MARGIN;
+    	ay[1] = ay[0];
+    	ay[2] = table[1].y - Constants.BOTTOM_SHELF_MARGIN;
+    	ay[3] = ay[2];
+
+    	bx[0] = ax[0] + Constants.SHELF_DX;
+    	bx[1] = ax[1] - Constants.SHELF_DX;
+    	bx[2] = ax[2] - Constants.SHELF_DX;
+    	bx[3] = ax[3] + Constants.SHELF_DX;
+
+    	by[0] = ay[0] + Constants.SHELF_DY;
+    	by[1] = ay[1] + Constants.SHELF_DY;
+    	by[2] = ay[2] - Constants.SHELF_DY;
+    	by[3] = ay[3] - Constants.SHELF_DY;
+
+    	g.setColor( Color.LIGHT_GRAY );
+    	int pxarr[] = {ax[0], bx[0], bx[3], ax[3]};
+    	int pyarr[] = {ay[0], by[0], by[3], ay[3]};
+
+    	g.fillPolygon(pxarr, pyarr, 4 );
+
+    	pxarr[0] = ax[0];
+    	pxarr[1] = ax[1];
+    	pxarr[2] = bx[1];
+    	pxarr[3] = bx[0];
+
+    	pyarr[0] = ay[0];
+    	pyarr[1] = ay[1];
+    	pyarr[2] = by[1];
+    	pyarr[3] = by[0];
+
+    	g.setColor( Constants.TOP_BOTTOM_COLOR );
+    	g.fillPolygon(pxarr, pyarr, 4 );
+
+    	pxarr[0] = bx[1];
+    	pxarr[1] = ax[1];
+    	pxarr[2] = ax[2];
+    	pxarr[3] = bx[2];
+
+    	pyarr[0] = by[1];
+    	pyarr[1] = ay[1];
+    	pyarr[2] = ay[2];
+    	pyarr[3] = by[2];
+
+    	g.setColor( Color.LIGHT_GRAY );
+    	g.fillPolygon(pxarr, pyarr, 4 );
+
+    	pxarr[0] = bx[3];
+    	pxarr[1] = bx[2];
+    	pxarr[2] = ax[2];
+    	pxarr[3] = ax[3];
+
+    	pyarr[0] = by[3];
+    	pyarr[1] = by[2];
+    	pyarr[2] = ay[2];
+    	pyarr[3] = ay[3];
+
+    	g.setColor( Constants.TOP_BOTTOM_COLOR );
+    	g.fillPolygon(pxarr, pyarr, 4 );
+
+    	int spaceLength = by[3] - by[0];
+    	int spaceWidth = ax[1] - ax[0];
+
+    	int midy = by[0] + (int)(spaceLength/Constants.MID_SHELF_SLIDER);
+
+    	pxarr[0] = ax[0];
+    	pxarr[1] = bx[0];
+    	pxarr[2] = bx[1];
+    	pxarr[3] = ax[1];
+
+    	pyarr[0] = midy;
+    	pyarr[1] = pyarr[0] - Constants.SHELF_DY;
+    	pyarr[2] = pyarr[1];
+    	pyarr[3] = pyarr[0];
+
+    	g.setColor( Constants.TOP_BOTTOM_COLOR );
+    	g.fillPolygon( pxarr, pyarr, 4 );
+
+    	shelves[0] = new Rectangle(bx[0], by[0], bx[1] - bx[0], pyarr[1] - by[0] + Constants.SHELF_DY/2 );
+    	shelves[1] = new Rectangle(bx[0], pyarr[0], bx[1] - bx[0], by[3] - pyarr[0] + Constants.SHELF_DY/2 );
+
+    	g.setColor( Color.BLACK );
+    	g.drawLine( pxarr[0], pyarr[0], pxarr[1], pyarr[1] );
+    	g.drawLine( pxarr[2], pyarr[2], pxarr[3], pyarr[3] );
+    	g.drawLine( ax[0], ay[0], bx[0], by[0] );
+    	g.drawLine( ax[1], ay[1], bx[1], by[1] );
+    	g.drawLine( ax[3], ay[3], bx[3], by[3] );
+    	g.drawLine( ax[2], ay[2], bx[2], by[2] );
+    	g.drawLine( ax[0], ay[0], ax[3], ay[3] );
+    	g.drawLine( ax[1], ay[1], ax[2], ay[2] );
+    	g.drawLine( ax[0], ay[0], ax[1], ay[1] );
+    	g.drawLine( ax[2], ay[2], ax[3], ay[3] );
+    	g.drawLine( bx[0], by[0], pxarr[1], pyarr[1] );
+    	g.drawLine( bx[1], by[1], pxarr[2], pyarr[2] );
+    	g.drawLine( pxarr[1], pyarr[1] + Constants.SHELF_DY, bx[3], by[3] );
+    	g.drawLine( pxarr[2], pyarr[2] + Constants.SHELF_DY, bx[2], by[2] );
+    	g.drawLine( pxarr[0], pyarr[0], pxarr[3], pyarr[3] );
+    	g.drawLine( pxarr[1], pyarr[1], pxarr[2], pyarr[2] );
+    	g.drawLine( bx[0], by[0], bx[1], by[1] );
+    	g.drawLine( bx[2], by[2], bx[3], by[3] );
+    }
+
+     public void drawTable( Graphics g )
+     {
+    	g.setColor( Color.BLACK );
+    	int hx = getHeight();
+    	int wx = getWidth();
+
+    	int floorLimit = (int)(hx/Constants.FLOOR_LIMIT);
+
+    	int sx = 0;
+    	int sy = hx - floorLimit - Constants.LENGTH_EDGE_HORIZONTAL_LINE;
+    	int ey = sy - Constants.TABLE_HEIGHT_FROM_EDGE_STARTINGS;
+    	int ex = (int)(wx*Constants.FRACTION_FIRST);
+    	table[0] = new Point( sx, sy );
+    	table[1] = new Point( ex, ey );
+    	g.drawLine( sx, sy, ex, ey );
+
+    	sx = ex;
+    	sy = ey;
+    	ex = sx + (int)(wx*Constants.FRACTION_SECOND);
+    	ey = sy;
+    	table[2] = new Point( ex, ey );
+    	g.drawLine( sx, sy, ex, ey );
+
+    	sx = ex;
+    	sy = ey;
+    	ex = sx + (int)(wx*Constants.FRACTION_FIRST);
+    	ey = hx - floorLimit - Constants.LENGTH_EDGE_HORIZONTAL_LINE;
+
+    	table[3] = new Point( ex, ey );
+    	g.drawLine( sx, sy, ex, ey );
+
+    	g.drawLine( table[0].x, table[0].y, table[3].x, table[3].y );
+
+    	int xarr[] = {table[0].x, table[3].x, table[3].x, table[0].x};
+    	int yarr[] = {table[0].y, table[3].y, table[3].y + Constants.TABLE_CROSS_SECION_WIDTH, table[0].y + Constants.TABLE_CROSS_SECION_WIDTH};
+    	g.setColor( Constants.LEG_COLOR );
+    	g.fillPolygon( xarr, yarr, 4 );
+
+    	xarr[0] = table[0].x;
+    	xarr[1] = table[1].x;
+    	xarr[2] = table[2].x;
+    	xarr[3] = table[3].x;
+
+    	yarr[0] = table[0].y;
+    	yarr[1] = table[1].y;
+    	yarr[2] = table[2].y;
+    	yarr[3] = table[3].y;
+
+    	g.setColor( Constants.LEG_EFFECT );
+    	g.fillPolygon( xarr, yarr, 4 );
+
+    	xarr[0] = Constants.EDGE_LEG_DISTANCE;
+    	xarr[1] = xarr[0] + Constants.LEG_WIDTH;
+    	xarr[2] = xarr[1];
+    	xarr[3] = xarr[0];
+
+    	yarr[0] = table[0].y + Constants.TABLE_CROSS_SECION_WIDTH;
+    	yarr[1] = table[0].y + Constants.TABLE_CROSS_SECION_WIDTH;
+    	yarr[2] = yarr[1] + Constants.FRONT_LEG_HEIGTH;
+    	yarr[3] = yarr[2];
+
+    	g.setColor( Constants.LEG_COLOR );
+    	g.fillPolygon( xarr, yarr, 4 );
+
+    	xarr[0] = wx - xarr[0];
+    	xarr[1] = wx - xarr[1];
+    	xarr[2] = xarr[1];
+    	xarr[3] = xarr[0];
+
+    	g.setColor( Constants.LEG_COLOR );
+    	g.fillPolygon( xarr, yarr, 4 );
+
+    	xarr[0] = Constants.EDGE_LEG_DISTANCE + Constants.LEG_WIDTH;
+    	xarr[1] = xarr[0] + 10;
+    	xarr[2] = xarr[1];
+    	xarr[3] = xarr[0];
+
+    	yarr[0] = yarr[0];
+    	yarr[1] = yarr[1];
+    	yarr[2] = yarr[2] - 8;
+
+    	g.setColor( Constants.LEG_EFFECT );
+    	g.fillPolygon( xarr, yarr, 4 );
+
+    	xarr[0] = wx - xarr[0];
+    	xarr[1] = wx - xarr[1];
+    	xarr[2] = wx - xarr[2];
+    	xarr[3] = wx - xarr[3];
+
+    	g.setColor( Constants.LEG_EFFECT );
+    	g.fillPolygon( xarr, yarr, 4 );
+
+    	plcmntStart = new Point( (table[0].x + table[1].x)/2, (table[0].y + table[1].y)/2 );
+    }
+
+    public void drawBasin( Graphics g )
+    {
+        double tantheta = (table[3].y - table[2].y)/(double)( table[3].x - table[2].x );
+        double tanthetaLeft = (table[0].y - table[1].y)/(double)( table[1].x - table[0].x );
+
+   		int xarr[] = new int[4];
+   		int yarr[] = new int[4];
+    	xarr[2] = table[2].x - Constants.DISTANCE_RIGHT_EDGE_BASIN;
+    	xarr[3] = xarr[2] + (int)(Constants.BASIN_WIDTH/tantheta);
+    	xarr[1] = xarr[2] - Constants.BACK_LENGTH_BASIN;
+    	xarr[0] = xarr[1] - (int)(Constants.BASIN_WIDTH/tantheta);
+
+    	yarr[3] = table[3].y - Constants.DISTANCE_BOTTOM_EDGE_BASIN;
+    	yarr[2] = yarr[3] - Constants.BASIN_WIDTH;
+    	yarr[1] = yarr[2];
+    	yarr[0] = yarr[3];
+
+    	plcmntEnd = new Point( xarr[0]  ,plcmntStart.y );
+
+    	g.setColor( Color.LIGHT_GRAY );
+    	g.fillPolygon( xarr, yarr, 4 );
+
+    	g.setColor( Color.BLACK );
+    	g.drawLine( xarr[1], yarr[1], xarr[1], yarr[1] + Constants.BASIN_WIDTH );
+    	g.drawLine( xarr[2], yarr[2], xarr[2], yarr[2] + Constants.BASIN_WIDTH );
+    	g.drawLine( xarr[0], yarr[0], xarr[1], yarr[1] );
+    	g.drawLine( xarr[1], yarr[1], xarr[2], yarr[2] );
+    	g.drawLine( xarr[2], yarr[2], xarr[3], yarr[3] );
+    	g.drawLine( xarr[3], yarr[3], xarr[0], yarr[0] );
+
+    	int tapx[] = new int[8];
+    	int tapy[] = new int[8];
+
+    	tapx[3] = xarr[2] + (int)(Constants.BASIN_WIDTH/((double)2*tantheta));
+    	tapx[2] = tapx[3];
+    	tapx[1] = tapx[2] - Constants.TAP_WIDTH;
+    	tapx[0] = tapx[1];
+    	tapx[7] = tapx[0] + Constants.TAP_THICKNESS;
+    	tapx[6] = tapx[7];
+    	tapx[5] = tapx[6] + Constants.TAP_WIDTH - 2*Constants.TAP_THICKNESS;
+    	tapx[4] = tapx[5];
+
+    	tapy[3] = yarr[2] + Constants.BASIN_WIDTH/2;//table[2].y + Constants.BASIN_WIDTH/2 + ((Constants.TABLE_HEIGHT_FROM_EDGE_STARTINGS + Constants.LENGTH_EDGE_HORIZONTAL_LINE) - ( Constants.DISTANCE_BOTTOM_EDGE_BASIN + Constants.BASIN_WIDTH));
+    	tapy[2] = tapy[3] - Constants.TAP_HEIGHT;
+    	tapy[1] = tapy[2];
+    	tapy[0] = tapy[1] + Constants.TAP_THICKNESS + 8;
+    	tapy[7] = tapy[0];
+    	tapy[6] = tapy[7] - 8;
+    	tapy[5] = tapy[6];
+    	tapy[4] = tapy[5] + Constants.TAP_HEIGHT - Constants.TAP_THICKNESS - (int)( Constants.TAP_THICKNESS * tantheta );
+
+    	g.setColor( Constants.TAP_COLOR );
+    	g.fillPolygon( tapx, tapy, 8);
+    	g.setColor( Color.BLACK );
+    	g.drawLine( tapx[0], tapy[0], tapx[1], tapy[1] );
+    	g.drawLine( tapx[1], tapy[1], tapx[2], tapy[2] );
+    	g.drawLine( tapx[2], tapy[2], tapx[3], tapy[3] );
+    	g.drawLine( tapx[4], tapy[4], tapx[5], tapy[5] );
+    	g.drawLine( tapx[5], tapy[5], tapx[6], tapy[6] );
+    	g.drawLine( tapx[6], tapy[6], tapx[7], tapy[7] );
+    }
+
+    public Vector< Vector < Point > >  getTileCoordinates()
+    {
+	hlines = new Vector< Line >();
+    	int wx = getWidth();
+    	int hx = getHeight();
+    	int floorLimit = (int)(hx/Constants.FLOOR_LIMIT);//Constants.FLOOR_LIMIT;
+    	
+        int dtheta = 0;
+        int sx, sy, ex, ey;
+        dtheta = 8;
+        Line l;
+        Vector< Line > lx = new Vector< Line >();
+        for( int k = Constants.TILE_SEPEEATION_AT_LOWEST_LEVEL; k < floorLimit; k += Constants.TILE_SEPEEATION_AT_LOWEST_LEVEL )
+        {
+        	l = new Line( new Point( 0, hx - k ), new Point( (int)( (floorLimit - k)/Math.tan( Math.toRadians( Constants.TILT_ANGLE_WALL - dtheta ) ) ), hx - floorLimit ) );
+        	dtheta += 8;
+        	lx.addElement( l );
+        }
+
+        hlines.addElement( new Line(new Point(0, hx), new Point(0, hx - floorLimit ) ) );
+
+        for( int idx = lx.size() - 1; idx >= 0; idx-- )
+        {
+        	 Line m = lx.elementAt( idx );
+        	 hlines.addElement( new Line( new Point( m.s ), new Point( m.e ) ) );
+        }
+        dtheta = 0;
+        for( int i = 0; i <= wx/2; i+= Constants.TILE_SEPEEATION_AT_LOWEST_LEVEL )
+        {
+        	sx = i;
+        	sy = hx;
+        	ey = hx - floorLimit;
+        	int mx = 1;
+
+        	if( i <= wx/2 )mx = 1;
+        	else mx = -1;
+
+        	ex = sx + (int)( mx*(floorLimit/ Math.tan( Math.toRadians( Constants.TILT_ANGLE + dtheta ) ) ) );
+        	hlines.addElement( new Line( new Point( sx, sy ), new Point( ex, ey ) ) );
+
+            dtheta += (int)(((90 - Constants.TILT_ANGLE )*(2*Constants.TILE_SEPEEATION_AT_LOWEST_LEVEL))/ (float)wx);
+        }
+
+        int sz = hlines.size();
+
+        l = new Line( new Point( wx/2, hx ), new Point( wx/2, hx - floorLimit ) );
+        hlines.addElement( l );
+
+        for( int j = sz - 1 ; j >= 0; j-- )
+        {
+        	l = hlines.elementAt( j );
+        	sx = wx - l.s.x;
+        	sy = l.s.y;
+        	ex = wx - l.e.x;
+        	ey = l.e.y;
+        	hlines.addElement( new Line( new Point( sx, sy ), new Point( ex, ey ) ) );
+        	
+        }
+
+
+        for( int ix = 0; ix < hlines.size(); ix++ )
+    	{
+    	   Point s = hlines.elementAt( ix ).s;
+    	   Point e = hlines.elementAt( ix ).e;
+    	}
+
+        Line ly = new Line( new Point( 0, hx - floorLimit ), new Point ( wx, hx - floorLimit ) );
+       
+        Vector< Vector < Point > > polygon = new Vector< Vector< Point > > ();
+        int ptr = 0, cx = 0;
+        while( true )
+        {
+        	Point pre = ly.s;
+        	int y, x;
+        	Vector< Point >px = new Vector< Point >();
+        	for( int ix = 0; ix < hlines.size(); ix++)
+        	{
+                   y = ly.s.y;
+              
+                   Point s = hlines.elementAt( ix ).s;
+        	   Point e = hlines.elementAt( ix ).e;
+
+                   x = (((y - e.y)*(e.x - s.x))/(e.y - s.y)) + e.x;
+
+                   if( y <= s.y && y >= e.y )
+                   {
+            	
+            	      if( pre.x == x && pre.y == y )px.remove( pre );
+            	      px.addElement( new Point( x, y ) );
+                      pre = new Point( x, y );
+              
+                   }
+                cx = 1 - cx;
+        	}
+        	
+        	polygon.addElement( px );
+
+        	if( ly.s.y == hx )break;
+
+        	ly.s.y = hlines.elementAt( ptr+1 ).s.y;
+        	ly.e.y = hlines.elementAt( ptr+1 ).s.y;
+        	ptr += 1;
+        }
+
+        return polygon;
+    }
+
+    public void fillTiles( Vector< Vector< Point > >px, Graphics g )
+    {
+    	int rs = 0;
+    	for( int i = 0; i < px.size() - 1; i++ )
+    	{
+    		int cs = rs;
+    		for( int j = 0, k = 0; j < px.elementAt( i ).size() - 1; j++ )
+    		{
+    			if( cs == 0 )g.setColor( Constants.TILE_COLOR_FIRST );
+   	                else if(cs == 1)g.setColor( Constants.TILE_COLOR_SECOND );
+
+    			Point p1 = px.elementAt( i ).elementAt( j );
+   			    Point p2 = px.elementAt( i ).elementAt( j + 1 );
+   			    Point p3 = px.elementAt( i + 1 ).elementAt( k );
+   			    Point p4 = new Point();
+    			if( j == 0 || j == px.elementAt( i ).size() - 2 )
+    			    p4 = new Point( p3 );
+    			else
+    			{
+    				p4 = new Point( p3 );
+    				p3 = px.elementAt( i + 1 ).elementAt( k + 1 );
+    				k += 1;
+    			}
+    		        int xpts[] = { p1.x, p2.x, p3.x, p4.x };
+   	                int ypts[] = { p1.y, p2.y, p3.y, p4.y };
+
+   	                g.fillPolygon( xpts, ypts, 4);
+    			cs = 1 - cs;
+    		}
+    	}
+    	rs = 1 - rs;
+    }
+    
+   
+   
+    public Point getTableCoordinates( int idx )
+    {
+    	return table[ idx ];
+    }
+
+
+    public Point getRandomPoint()
+    {
+      	Random rand = new Random();
+      	int x = plcmntStart.x + rand.nextInt( plcmntEnd.x - plcmntStart.x - Constants.SEPERATION_BASINLEFT_PLCMNTEND);
+      	int y = plcmntStart.y;
+      	
+      	return new Point( x, y );
+    }
+    
+
+    public void mouseEntered( MouseEvent me )
+    {
+    }
+
+
+    public void mouseExited( MouseEvent me )
+    {
+    }
+
+
+    public void mousePressed( MouseEvent me )
+    {   
+     
+        Point l = new Point( me.getX(), me.getY());
+        for(int i=0;i<Equipments.getEquipments().size();i++) {
+            Equipment equipment = (Equipment)Equipments.getEquipments().get(i);
+        /*    if(equipment.contains(l)) {
+                canMove=true;
+                currentIndex=i;
+
+            }*/ // commented
+
+        }
+    }
+
+    public void mouseReleased( MouseEvent me )
+    {
+    	canMove=false;
+        currentIndex=-1;
+    }
+
+    public void mouseClicked( MouseEvent me )
+    {
+    }
+
+    public void mouseMoved( MouseEvent me )
+    {
+        Point l = new Point( me.getX(), me.getY());
+        for(int i=0;i<Equipments.getEquipments().size();i++) {
+            Equipment equipment = (Equipment)Equipments.getEquipments().get(i);
+          /*  if(equipment.contains(l)) {
+               // System.out.println("under the mouse");
+                equipment.borderColor = Color.red;
+
+            } else {
+                equipment.borderColor = Color.blue;
+            }
+            repaint();*/ //commented
+        }
+    }
+
+    
+    public void mouseDragged( MouseEvent me )
+    {
+        
+        if(canMove){
+            int x=me.getX();
+            int y=me.getY();
+            System.out.println("Mouse Dragged ");
+            System.out.println(currentIndex);
+            if(Equipments.getEquipments().size()>0 && x>this.getX()+20&x<getX()+this.getWidth()-20 && y>this.getY()+20&y<this.getY()+this.getHeight()-20){
+               Equipment equipment=Equipments.getEquipments().get(currentIndex);
+      // commented       // equipment.setPosition(new Point(x,y));
+            }
+            
+        }
+        repaint();
+    }
+}

@@ -1,0 +1,52 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package ekshiksha.vclab.activity;
+/**
+ *
+ * @author asl
+ */
+public class Pour extends Activity {
+
+    public int sourceId;
+    public int destinationId;
+    public float quantity;
+
+    public Pour(String type, int sourceId, int destinationId, float quantity) {
+        super(type);
+        this.sourceId= sourceId;
+        this.destinationId= destinationId;
+        this.quantity= quantity;
+
+    }
+
+    public void setSourceId(int sourceId) {
+        this.sourceId = sourceId;
+    }
+    public int getSourceId() {
+        return sourceId;
+    }
+
+    public void setDestinationId(int destinationId) {
+        this.destinationId = destinationId;
+    }
+    public int getDestinationId() {
+        return destinationId;
+    }
+
+    public void setQuantity(float quantity) {
+        this.quantity = quantity;
+    }
+    public float getQuantity(){
+        return quantity;
+    }
+
+    @Override
+    public void execute(){
+        System.out.println("You are in Pour class");
+
+    }
+
+}

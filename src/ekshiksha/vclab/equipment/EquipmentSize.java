@@ -1,0 +1,20 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package ekshiksha.vclab.equipment;
+
+/**
+ *
+ * @author mayur
+ */
+public interface EquipmentSize {
+
+    public static final String EXTRASMALL = "ExtraSmall";
+    public static final String SMALL = "Small";
+    public static final String MEDIUM = "Medium";
+    public static final String LARGE = "Large";
+    public static final String EXTRALARGE = "ExtraLarge";
+
+}

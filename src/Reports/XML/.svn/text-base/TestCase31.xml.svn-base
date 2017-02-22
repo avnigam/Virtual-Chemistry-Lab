@@ -1,0 +1,28 @@
+<Experiment>
+    <Header>
+	<Title Value="Preparation of solution of known molarity"></Title>
+        <Author Name="EkShiksha"></Author>
+        <Level Value="CBSE Standard IX"></Level>
+        <Marks Value="100"></Marks>
+        <Description Value="Prepare a solution of 0.1M Sulphuric Acid\nGiven : 1M Sulphuric Acid\nGiven : Water\nPrepared solution to be stored in a bottle and labeled appropriately."></Description>
+        <Student Name="A B C"></Student>
+    </Header>
+    <Setup>
+	<Equipment Id="4" Type="Bottle" Size="eXtraLarge" Name="Bo5" Contents="Water" Quantity="1000" Strength="1" Location="Table 1200,0.7"></Equipment>
+	<Equipment Id="7" Type="Bottle" Size="Large" Name="Bo6" Location="Shelf Top 5"></Equipment>
+	<Equipment Id="8" Type="Beaker" Size="eXtraSmall" Name="Be3" Location="Table 0.20,1000"></Equipment>
+	<Equipment Id="20" Type="Burner" Size="Medium" Name="B1" Location="Table 1000,1000"></Equipment>
+    </Setup>
+    <Perform>
+	<Activity Type="Move" Id="5" Location="Table 0.5,0.5"></Activity>
+	
+    </Perform>
+    <Observation>
+	<Remarks Value="10 ml of 1M Sulphuric Acid mixed with 90 ml of water produced 100ml of 0.1M Sulphuric acid."></Remarks>
+    </Observation>
+    <Evaluation>
+	<Marks Value="50"></Marks>
+	<Remarks Value="List of Errors."></Remarks>
+	
+    </Evaluation>
+</Experiment>

@@ -1,0 +1,58 @@
+/*
+ * To change this template, choose Tools | Templates
+ * and open the template in the editor.
+ */
+
+package ekshiksha.vclab.lab;
+
+import ekshiksha.vclab.equipment.Equipment;
+import ekshiksha.vclab.equipment.Equipments;
+import ekshiksha.vclab.parser.*;
+import java.awt.BorderLayout;
+import java.util.ArrayList;
+import javax.swing.*;
+
+/**
+ *
+ * @author asl
+ */
+public class VirtualChemLab extends JApplet  {
+    
+   private  WorkBench environ;
+   public static int PORT;
+   public static String HOST;
+ 
+   //Equipment beaker= new Beaker(80,80,new Point(300,300),1,1);
+   //Equipment beaker1= new Beaker(80,80,new Point(370,300),1,1);
+   ChemXML chemXml = new ChemXML();
+   
+    @Override
+   public void init(){
+
+
+       createAndShowGUI();
+
+       //Equipments.add(beaker);
+       //Equipments.add(beaker1);
+      
+      // int result = chemXml.readJournal("http://10.129.26.66/ChemLab/Journal.xml");
+       //System.out.println(result);
+       
+       ArrayList<Equipment> equipments= Equipments.getEquipments();
+       for(int i=0;i<equipments.size();i++) {
+           Equipment equip = equipments.get(i);
+           
+       }
+       
+
+    }
+
+
+   private void createAndShowGUI(){
+
+       setLayout( new BorderLayout() );
+       environ =new WorkBench();
+       this.add(environ);
+   }
+        
+}
